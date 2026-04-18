@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Produtos - Ótica Express</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Ótica Express (SOE)</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item">Painel Geral</a>
+                <a href="#" class="menu-item active">Controle de produtos</a>
+                <a href="#" class="menu-item">Configurações</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item sair"><span class="material-icons">logout</span> Sair</a>
+                <div class="user-info">
+                    <span>Logado como:</span>
+                    <strong>Vitor (administrador)</strong>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Controle de produtos</h1>
+            </header>
+
+            <section class="card-produtos">
+                <div class="card-header">
+                    <h2>Produtos</h2>
+                    <button id="btnAbrirModal" class="btn-verde">
+                        + Adicionar produto
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="tabelaProdutos">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Cor</th>
+                                <th>Tamanho</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modalProduto" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="material-icons">inventory_2</span>
+                <h2 id="modalTitulo">Adicionar produto</h2>
+            </div>
+            <form id="formProduto">
+                <input type="hidden" id="produtoId">
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Marca:</label>
+                        <input type="text" id="inputMarca" placeholder="Ex: Ray-Ban" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo:</label>
+                        <input type="text" id="inputModelo" placeholder="Ex: Aviador" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Cores:</label>
+                        <input type="text" id="inputCor" placeholder="Ex: Dourado" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tamanhos:</label>
+                        <input type="text" id="inputTamanho" placeholder="Ex: M" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Material:</label>
+                        <input type="text" id="inputMaterial" placeholder="Ex: Acetato, Metal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo:</label>
+                        <select id="inputTipo" required>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Preço (R$):</label>
+                        <input type="number" id="inputPreco" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque:</label>
+                        <input type="number" id="inputEstoque" min="0" placeholder="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>URL da Imagem (Opcional):</label>
+                    <input type="url" id="inputImagemUrl" placeholder="https://site.com/imagem.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição (Opcional):</label>
+                    <textarea id="inputDescricao" rows="3" placeholder="Detalhes da armação..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="btnCancelar" class="btn-cinza">Cancelar</button>
+                    <button type="submit" id="btnSalvar" class="btn-verde">Salvar produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
