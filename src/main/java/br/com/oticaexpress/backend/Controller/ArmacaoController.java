@@ -2,6 +2,7 @@ package br.com.oticaexpress.backend.Controller;
 
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.oticaexpress.backend.DTO.ArmacaoDTO;
 import br.com.oticaexpress.backend.Model.Armacao;
 import br.com.oticaexpress.backend.Model.Enum.TipoArmacao;
 import br.com.oticaexpress.backend.Repository.IArmacaoRepository;
 import br.com.oticaexpress.backend.Util.Utils;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,15 +54,12 @@ public class ArmacaoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarArmacao(@RequestBody Armacao armacao) {
+    public ResponseEntity<?> criarArmacao(@RequestBody @Valid ArmacaoDTO armacao) {
 
-        Optional<Armacao> buscaModeloArmacao = armacaoRepository.findByModelo(armacao.getModelo());
-
-        if (buscaModeloArmacao.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(armacaoRepository.save(armacao));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Uma armação desse modelo já existe!!");
-        }
+        Armacao armacaoModel = new Armacao();
+        BeanUtils.copyProperties(armacao, armacaoModel);
+    
+        return ResponseEntity.status(HttpStatus.CREATED).body(armacaoRepository.save(armacaoModel));
     }
 
     @PutMapping("/{id}")

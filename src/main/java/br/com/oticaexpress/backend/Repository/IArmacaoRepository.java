@@ -10,4 +10,5 @@ import br.com.oticaexpress.backend.Model.Armacao;
 public interface IArmacaoRepository extends JpaRepository<Armacao, Long> {
     Optional<Armacao> findById(Long id);
     Optional<Armacao> findByModelo(String modelo);
+    
 }
