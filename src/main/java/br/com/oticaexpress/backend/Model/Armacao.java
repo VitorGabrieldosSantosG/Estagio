@@ -18,6 +18,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Armacao {
 
     @Id

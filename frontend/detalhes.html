@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Express - Detalhes do Produto</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mode-store">
+    <!-- TOP BAR -->
+    <header class="store-header">
+        <div class="header-container">
+            <div class="header-logo" onclick="window.location.href='index.html'">
+                <div class="logo-box">
+                    <span class="material-icons logo-icon">visibility</span>
+                    <div class="logo-text">
+                        <strong>Ótica</strong><span>Express</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-search" style="visibility: hidden;">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar...">
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos">
+                    <span class="material-icons">assignment</span>
+                </button>
+                <button class="action-btn" title="Carrinho" onclick="window.location.href='checkout.html'">
+                    <span class="material-icons">shopping_cart</span>
+                    <span class="cart-badge" id="carrinhoQuantidade">0</span>
+                </button>
+                <button class="action-btn user-btn" title="Minha Conta" id="btnHeaderUser">
+                    <span class="material-icons">account_circle</span>
+                    <span id="userNameHeader">Entrar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <main class="main-content">
+            <div class="product-detail-card animate-fade">
+                <div class="detail-layout">
+                    <div class="detail-images-section">
+                        <div class="main-image-box">
+                            <img id="detailMainImage" src="" alt="Armação">
+                        </div>
+                        <div class="thumbnail-list">
+                            <div class="thumb-box active"><img id="thumb1" src="" alt="Thumb 1"></div>
+                            <div class="thumb-box"><img id="thumb2" src="" alt="Thumb 2"></div>
+                            <div class="thumb-box"><img id="thumb3" src="" alt="Thumb 3"></div>
+                            <div class="thumb-box"><img id="thumb4" src="" alt="Thumb 4"></div>
+                        </div>
+                        <div class="description-section">
+                            <h3>Descrição</h3>
+                            <div class="description-card">
+                                <p id="detailDescricao">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-info-section">
+                        <h1 id="detailTitulo">TechVision Aviator Pro</h1>
+                        <p class="detail-size">Tamanho: <span id="detailTamanho">M</span></p>
+                        <div class="color-select-section">
+                            <p>Coloração: Selecione uma cor disponível</p>
+                            <div class="color-circles" id="detailColorCircles">
+                                <!-- Cores mapeadas -->
+                            </div>
+                        </div>
+                        <div class="price-section">
+                            <p>Preço:</p>
+                            <h2>R$ <span id="detailPreco">0,00</span> <span class="installments">ou 10X de R$ <span id="detailParcela">0,00</span></span></h2>
+                        </div>
+                        <button class="btn-orange-cart" onclick="adicionarAoCarrinhoDetalhes()">
+                            <span class="material-icons">add_shopping_cart</span> Adicionar ao carrinho
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="detalhes.js"></script>
+</body>
+</html>

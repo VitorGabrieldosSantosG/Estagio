@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Express - Configurações</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mode-admin">
+    <div class="layout-container">
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Ótica Express (SOE)</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item">
+                    <span class="material-icons">dashboard</span> Painel Geral
+                </a>
+                <a href="produtos.html" id="menuProdutos" class="menu-item">
+                    <span class="material-icons">inventory_2</span> Controle de produtos
+                </a>
+                <a href="config.html" class="menu-item active">
+                    <span class="material-icons">settings</span> Configurações
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item sair" onclick="logout()"><span class="material-icons">logout</span> Sair</a>
+                <div class="user-info">
+                    <span>Logado como:</span>
+                    <strong id="sidebarUserName">Nome (cargo)</strong>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO MAIN -->
+        <main class="main-content">
+            <div class="card-produtos animate-fade" style="padding: 40px;">
+                <h2>Configurações do Sistema</h2>
+                <br>
+                <p>Interface de configurações do Ótica Express. Aqui você pode gerenciar opções do sistema.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuth(['ADMINISTRADOR', 'LABORATORISTA'])) return;
+
+            const user = getLoggedUser();
+            document.getElementById('sidebarUserName').innerText = `${user.nome} (${user.role.toLowerCase()})`;
+
+            // Ocultar menu de produtos caso seja laboratorista
+            const menuProd = document.getElementById('menuProdutos');
+            if (user.role === 'LABORATORISTA') {
+                menuProd.style.display = 'none';
+            } else {
+                menuProd.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>

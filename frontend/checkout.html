@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Express - Finalização do Pedido</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mode-store">
+    <!-- TOP BAR -->
+    <header class="store-header">
+        <div class="header-container">
+            <div class="header-logo" onclick="window.location.href='index.html'">
+                <div class="logo-box">
+                    <span class="material-icons logo-icon">visibility</span>
+                    <div class="logo-text">
+                        <strong>Ótica</strong><span>Express</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-search" style="visibility: hidden;">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar...">
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos">
+                    <span class="material-icons">assignment</span>
+                </button>
+                <button class="action-btn" title="Carrinho" onclick="window.location.href='checkout.html'">
+                    <span class="material-icons">shopping_cart</span>
+                    <span class="cart-badge" id="carrinhoQuantidade">0</span>
+                </button>
+                <button class="action-btn user-btn" title="Minha Conta" id="btnHeaderUser">
+                    <span class="material-icons">account_circle</span>
+                    <span id="userNameHeader">Entrar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <main class="main-content">
+            <div class="checkout-layout animate-fade">
+                <!-- Coluna 1: Dados e Endereço -->
+                <div class="checkout-forms">
+                    <div class="checkout-card">
+                        <h2>Dados do cliente</h2>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label>Nome completo:</label>
+                                <input type="text" id="checkNome" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>CPF:</label>
+                                <input type="text" id="checkCpf" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone:</label>
+                                <input type="text" id="checkTelefone" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail:</label>
+                                <input type="text" id="checkEmail" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-card">
+                        <h2>Endereço de Entrega</h2>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label>CEP:</label>
+                                <input type="text" id="checkCep" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Número:</label>
+                                <input type="text" id="checkNumero" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Complemento:</label>
+                                <input type="text" id="checkComplemento" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Cidade/Estado:</label>
+                                <input type="text" id="checkCidadeEstado" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Rua / Avenida</label>
+                            <input type="text" id="checkRua" readonly style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <label>Bairro:</label>
+                            <input type="text" id="checkBairro" readonly style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Resumo do Pedido -->
+                <div class="checkout-summary">
+                    <div class="checkout-card">
+                        <h2>Resumo do pedido</h2>
+                        <div class="summary-gray-box">
+                            <strong>Medidas faciais realizadas:</strong>
+                            <p>Distância pupilar (DP): 62mm</p>
+                            <p>Altura de montagem: 24mm</p>
+                        </div>
+
+                        <div class="summary-details">
+                            <p>Lentes: <span id="summaryLentes">xx Esquerdo, xx Direito</span></p>
+                            <p>Tamanho da Armação: <span id="summaryTamanhoArmacao">M</span></p>
+                            <p>Subtotal: R$ <span id="summarySubtotal">0,00</span></p>
+                            <p>Frete: R$ <span id="summaryFrete">15,00</span></p>
+                            <p>Desconto: R$ 0,00</p>
+                            
+                            <hr class="summary-divider">
+                            
+                            <div class="total-row">
+                                <span>Total:</span>
+                                <strong id="summaryTotal">R$ 0,00</strong>
+                            </div>
+
+                            <!-- Upload da Receita -->
+                            <div class="form-group receita-upload">
+                                <label><span class="material-icons">description</span> Enviar Receita de Grau:</label>
+                                <input type="file" id="inputReceita" accept="image/*,application/pdf" onchange="simularUploadReceita(event)">
+                                <input type="hidden" id="urlReceitaValidada" value="https://otica-express-receitas.s3.amazonaws.com/mock-receita.png">
+                                <p class="receita-status" id="receitaStatus">Receita padrão anexada automaticamente.</p>
+                            </div>
+
+                            <button class="btn-green-submit" onclick="finalizarCompra()">Confirmar Pedido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html>

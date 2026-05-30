@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Express - Painel de Gestão</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mode-admin">
+    <div class="layout-container">
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Ótica Express (SOE)</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item active">
+                    <span class="material-icons">dashboard</span> Painel Geral
+                </a>
+                <a href="produtos.html" id="menuProdutos" class="menu-item">
+                    <span class="material-icons">inventory_2</span> Controle de produtos
+                </a>
+                <a href="config.html" class="menu-item">
+                    <span class="material-icons">settings</span> Configurações
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item sair" onclick="logout()"><span class="material-icons">logout</span> Sair</a>
+                <div class="user-info">
+                    <span>Logado como:</span>
+                    <strong id="sidebarUserName">Nome (cargo)</strong>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO MAIN -->
+        <main class="main-content">
+            <h1 class="view-title">Gestão de Produção e Entrega</h1>
+            
+            <div class="kpi-container animate-fade">
+                <div class="kpi-card orange">
+                    <span>Aguardando produção</span>
+                    <strong id="kpiAguardando">0</strong>
+                </div>
+                <div class="kpi-card blue">
+                    <span>Em produção (laboratório)</span>
+                    <strong id="kpiProducao">0</strong>
+                </div>
+                <div class="kpi-card green">
+                    <span>Prontos para envio</span>
+                    <strong id="kpiProntos">0</strong>
+                </div>
+            </div>
+
+            <div class="card-produtos animate-fade" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h2>Fila de pedidos</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Armação</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaPedidos">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE CHECKLIST DE STATUS -->
+    <div id="modalChecklist" class="modal-overlay">
+        <div class="modal-box checklist-modal-box">
+            <div class="modal-header">
+                <span class="material-icons">playlist_add_check</span>
+                <h2 id="checklistTitulo">Pedido #101</h2>
+            </div>
+            
+            <div class="checklist-content">
+                <div class="checklist-section">
+                    <h3>Etapa Inicial</h3>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_MEDIDAS_CONFIRMADAS" value="MEDIDAS_CONFIRMADAS">
+                        <span>Medidas confirmadas</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_PEDIDO_RECEBIDO" value="PEDIDO_RECEBIDO">
+                        <span>Pedido recebido</span>
+                    </label>
+                </div>
+
+                <div class="checklist-section">
+                    <h3>Fase laboratorial</h3>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_SEPARACAO_ARMACAO" value="SEPARACAO_ARMACAO">
+                        <span>Separação da armação</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_FABRICACAO_LENTE" value="FABRICACAO_LENTE">
+                        <span>Fabricação das lentes</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_MONTAGEM_OCULOS" value="MONTAGEM_OCULOS">
+                        <span>Montagem do óculos</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_CONTROLE_QUALIDADE" value="CONTROLE_QUALIDADE">
+                        <span>Controle de qualidade</span>
+                    </label>
+                </div>
+
+                <div class="checklist-section">
+                    <h3>Fase administrativa</h3>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_EMBALAR" value="EMBALAR">
+                        <span>Embalar</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_ENVIO_ENTREGA" value="ENVIO_ENTREGA">
+                        <span>Envio para entrega</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox" id="chkStatus_ENTREGUE_CLIENTE" value="ENTREGUE_CLIENTE">
+                        <span>Entregue ao cliente</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cinza" onclick="fecharModalChecklist()">Fechar</button>
+                <button type="button" class="btn-verde" onclick="salvarChecklistStatus()">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ótica Express - Vitrine</title>
+    <title>Ótica Express - Senha</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,15 +21,14 @@
                 </div>
             </div>
             
-            <div class="header-search">
+            <div class="header-search" style="visibility: hidden;">
                 <div class="search-box">
-                    <span class="material-icons search-icon">search</span>
-                    <input type="text" id="inputPesquisar" placeholder="Pesquisar..." oninput="filtrarCatalogo()">
+                    <input type="text" placeholder="Pesquisar...">
                 </div>
             </div>
 
             <div class="header-actions">
-                <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos">
+                <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos" style="display:none;">
                     <span class="material-icons">assignment</span>
                 </button>
                 <button class="action-btn" title="Carrinho" onclick="window.location.href='checkout.html'">
@@ -46,14 +45,37 @@
 
     <div class="layout-container">
         <main class="main-content">
-            <h1 class="view-title animate-fade">Promoções</h1>
-            <div class="product-grid" id="catalogoGrid">
-                <!-- Inserido via JS -->
+            <div class="auth-card animate-fade">
+                <div class="auth-logo">
+                    <span class="material-icons auth-logo-icon">visibility</span>
+                    <h2>Ótica Express</h2>
+                </div>
+                <p class="auth-subtitle">Por último preencha sua senha</p>
+                
+                <form id="formCadastroSenha" onsubmit="finalizarCadastro(event)">
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="regSenha" placeholder="Senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Digite a senha novamente</label>
+                        <input type="password" id="regSenhaRepetida" placeholder="Repita a senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Conta</label>
+                        <select id="regRole" required>
+                            <option value="CLIENTE">Cliente (Comprador)</option>
+                            <option value="LABORATORISTA">Laboratorista (Produção)</option>
+                            <option value="ADMINISTRADOR">Administrador (Gestor)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Criar conta</button>
+                </form>
             </div>
         </main>
     </div>
 
     <script src="auth.js"></script>
-    <script src="index.js"></script>
+    <script src="cadastro-senha.js"></script>
 </body>
 </html>

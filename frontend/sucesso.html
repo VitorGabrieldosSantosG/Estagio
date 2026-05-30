@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ótica Express - Vitrine</title>
+    <title>Ótica Express - Compra Realizada</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,10 +21,9 @@
                 </div>
             </div>
             
-            <div class="header-search">
+            <div class="header-search" style="visibility: hidden;">
                 <div class="search-box">
-                    <span class="material-icons search-icon">search</span>
-                    <input type="text" id="inputPesquisar" placeholder="Pesquisar..." oninput="filtrarCatalogo()">
+                    <input type="text" placeholder="Pesquisar...">
                 </div>
             </div>
 
@@ -46,14 +45,18 @@
 
     <div class="layout-container">
         <main class="main-content">
-            <h1 class="view-title animate-fade">Promoções</h1>
-            <div class="product-grid" id="catalogoGrid">
-                <!-- Inserido via JS -->
+            <div class="success-card animate-fade">
+                <span class="material-icons success-icon">check_circle</span>
+                <p>Parabéns, sua compra foi finalizada com sucesso. Para verificar mais informações, basta clicar no seu ícone de perfil e em meus pedidos.</p>
             </div>
         </main>
     </div>
 
     <script src="auth.js"></script>
-    <script src="index.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateHeader();
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Express - Criar Conta</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mode-store">
+    <!-- TOP BAR -->
+    <header class="store-header">
+        <div class="header-container">
+            <div class="header-logo" onclick="window.location.href='index.html'">
+                <div class="logo-box">
+                    <span class="material-icons logo-icon">visibility</span>
+                    <div class="logo-text">
+                        <strong>Ótica</strong><span>Express</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-search" style="visibility: hidden;">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar...">
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos" style="display:none;">
+                    <span class="material-icons">assignment</span>
+                </button>
+                <button class="action-btn" title="Carrinho" onclick="window.location.href='checkout.html'">
+                    <span class="material-icons">shopping_cart</span>
+                    <span class="cart-badge" id="carrinhoQuantidade">0</span>
+                </button>
+                <button class="action-btn user-btn" title="Minha Conta" id="btnHeaderUser">
+                    <span class="material-icons">account_circle</span>
+                    <span id="userNameHeader">Entrar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <main class="main-content">
+            <div class="auth-card animate-fade">
+                <div class="auth-logo">
+                    <span class="material-icons auth-logo-icon">visibility</span>
+                    <h2>Ótica Express</h2>
+                </div>
+                <p class="auth-subtitle">Bem vindo à loja da ótica express, para continuar com a criação da conta, preencha os seguintes dados:</p>
+                
+                <form id="formCadastroInfo" onsubmit="irParaCadastroEndereco(event)">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="regNome" placeholder="Seu nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" placeholder="Ex: joao@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CPF</label>
+                        <input type="text" id="regCpf" placeholder="000.000.000-00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="regTelefone" placeholder="(00) 00000-0000" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Próxima etapa</button>
+                    <p class="auth-footer-text">Já tem uma conta? <a href="login.html">Fazer Login</a></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cadastro.js"></script>
+</body>
+</html>
