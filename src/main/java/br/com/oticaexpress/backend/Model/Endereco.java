@@ -1,5 +1,8 @@
 package br.com.oticaexpress.backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.com.oticaexpress.backend.Model.Enum.EnumEstado;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,15 +10,15 @@ import lombok.ToString;
 
 @Data
 @Entity
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usarioId"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usarioId"})
 public class Endereco {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ToString.Exclude
     @OneToOne(mappedBy = "endereco")
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     private Usuario usarioId;
 
     private String cep;
@@ -24,7 +27,7 @@ public class Endereco {
     private String bairro;
     private String complemento;
 
-    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private EnumEstado estado;
 
     private int numero;

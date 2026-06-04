@@ -6,12 +6,15 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.com.oticaexpress.backend.Model.Enum.EnumStatusPedido;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,7 +25,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Pedido {
 
     @Id
@@ -40,7 +43,7 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private EnumStatusPedido status;
 
-    @OneToMany(mappedBy = "pedidoId", cascade = CascadeType.ALL, fetch = jakarta.persistence.FetchType.EAGER)
+    @OneToMany(mappedBy = "pedidoId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ItemPedido> listaProdutos;
 
     private String urlReceitaValidada;

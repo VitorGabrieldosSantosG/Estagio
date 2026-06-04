@@ -41,14 +41,13 @@ public class SecurityConfig {
                 .requestMatchers("/armacao/**").hasAuthority("ADMINISTRADOR")
                 .requestMatchers("/pedido/**").hasAnyAuthority("CLIENTE", "LABORATORISTA", "ADMINISTRADOR")
                 .requestMatchers("/item-pedido/**").hasAnyAuthority("CLIENTE", "LABORATORISTA", "ADMINISTRADOR")
-                .requestMatchers("/endereco/**").hasAnyAuthority("CLIENTE", "ADMINISTRADOR")
+                .requestMatchers("/endereco/**").hasAnyAuthority("CLIENTE", "LABORATORISTA", "ADMINISTRADOR")
                 .requestMatchers(HttpMethod.GET, "/usuario/{id}").hasAnyAuthority("CLIENTE", "LABORATORISTA", "ADMINISTRADOR")
                 .requestMatchers(HttpMethod.PUT, "/usuario/{id}").hasAnyAuthority("CLIENTE", "LABORATORISTA", "ADMINISTRADOR")
                 .requestMatchers("/usuario/**").hasAuthority("ADMINISTRADOR")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

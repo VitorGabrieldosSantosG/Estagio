@@ -1,12 +1,14 @@
 package br.com.oticaexpress.backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.com.oticaexpress.backend.Model.Enum.EnumRoleUsuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
 
     @Id
@@ -19,10 +21,11 @@ public class Usuario {
     private String cpf;
     private String telefone;
 
-    @OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
-    @jakarta.persistence.JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usarioId"})  
     private Endereco endereco;
 
-    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private EnumRoleUsuario role;
 }
