@@ -6,6 +6,19 @@ const API_ENDERECO = `${BASE_URL}/endereco`;
 const API_PEDIDO = `${BASE_URL}/pedido`;
 const API_ITEM_PEDIDO = `${BASE_URL}/item-pedido`;
 
+// Calcula o prefixo de caminho correto baseado na profundidade da pasta atual
+// Ex: em Cadastros/ ou Cliente/ → '../'  |  em frontend/ → ''
+function rootPath() {
+    const depth = window.location.pathname.split('/').filter(Boolean).length;
+    // Se estiver em uma subpasta (ex: /Cliente/, /Cadastros/, /Dashboards/)
+    // a profundidade será > 2 em servidores como Live Server
+    const segments = window.location.pathname.replace(/\/[^/]+$/, '').split('/');
+    const hasSubfolder = ['Cliente', 'Cadastros', 'Dashboards'].some(f =>
+        window.location.pathname.includes('/' + f + '/')
+    );
+    return hasSubfolder ? '../' : '';
+}
+
 // Retorna o usuário logado
 function getLoggedUser() {
     const user = localStorage.getItem('otica_user');
@@ -21,12 +34,12 @@ function isLoggedIn() {
 function checkAuth(allowedRoles) {
     const user = getLoggedUser();
     if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = rootPath() + 'login.html';
         return false;
     }
     if (allowedRoles && !allowedRoles.includes(user.role)) {
         alert("Você não tem permissão para acessar esta página!");
-        window.location.href = 'index.html';
+        window.location.href = rootPath() + 'index.html';
         return false;
     }
     return true;
@@ -36,7 +49,7 @@ function checkAuth(allowedRoles) {
 function logout() {
     localStorage.removeItem('otica_user');
     localStorage.removeItem('otica_cart');
-    window.location.href = 'index.html';
+    window.location.href = rootPath() + 'index.html';
 }
 
 // Atualiza o cabeçalho padrão da loja
@@ -70,7 +83,7 @@ function updateHeader() {
                 parent.title = "Minha Conta";
                 parent.onclick = (e) => {
                     e.preventDefault();
-                    window.location.href = 'login.html';
+                    window.location.href = rootPath() + 'login.html';
                 };
             }
         }
@@ -81,10 +94,10 @@ function updateHeader() {
             btnPedidos.style.display = 'flex';
             if (user.role !== 'CLIENTE') {
                 btnPedidos.title = "Painel de Gestão";
-                btnPedidos.onclick = () => { window.location.href = 'dashboard.html'; };
+                btnPedidos.onclick = () => { window.location.href = './Dashboards/dashboard.html'; };
             } else {
                 btnPedidos.title = "Meus Pedidos";
-                btnPedidos.onclick = () => { window.location.href = 'pedidos.html'; };
+                btnPedidos.onclick = () => { window.location.href = './Cliente/pedidos.html'; };
             }
         } else {
             btnPedidos.style.display = 'none';

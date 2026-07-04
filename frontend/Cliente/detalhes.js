@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarDetalhesProduto(productId);
     } else {
         alert("Produto não especificado.");
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
     }
 });
 
@@ -20,7 +20,7 @@ async function carregarDetalhesProduto(id) {
         const response = await fetch(`${API_ARMACAO}/${id}`);
         if (!response.ok) {
             alert("Produto não encontrado.");
-            window.location.href = "index.html";
+            window.location.href = "../index.html";
             return;
         }
         
@@ -44,23 +44,14 @@ async function carregarDetalhesProduto(id) {
         document.getElementById('thumb3').src = imgUrl;
         document.getElementById('thumb4').src = imgUrl;
 
-        // Cores
+        // Exibir cor real do produto como texto
         const coresDiv = document.getElementById('detailColorCircles');
         coresDiv.innerHTML = '';
-        const cores = [currentProduct.cor, 'Marrom', 'Azul Marinho', 'Verde', 'Roxo', 'Azul'];
-        const coresHex = {
-            'Preto': '#1a1a1a', 'Marrom': '#795548', 'Azul Marinho': '#0d47a1', 
-            'Verde': '#2ecc71', 'Roxo': '#9b59b6', 'Azul': '#3498db', 'Dourado': '#f1c40f', 'Prata': '#bdc3c7'
-        };
-
-        cores.forEach(c => {
-            const hex = coresHex[c] || '#888';
-            const circle = document.createElement('div');
-            circle.className = 'color-circle';
-            circle.style.backgroundColor = hex;
-            circle.title = c;
-            coresDiv.appendChild(circle);
-        });
+        const cor = currentProduct.cor || 'Não informado';
+        const badge = document.createElement('span');
+        badge.className = 'detail-color-badge';
+        badge.textContent = '🎨 ' + cor;
+        coresDiv.appendChild(badge);
 
     } catch (error) {
         console.error("Erro ao carregar detalhes:", error);
@@ -76,5 +67,5 @@ function adicionarAoCarrinhoDetalhes() {
     
     updateHeader();
     alert(`Produto ${currentProduct.marca} ${currentProduct.modelo} adicionado ao carrinho!`);
-    window.location.href = "index.html";
+    window.location.href = "../index.html";
 }

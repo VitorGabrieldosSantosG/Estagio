@@ -64,7 +64,7 @@ async function finalizarCadastro(event) {
 
         if (!resLogin.ok) {
             alert("Erro ao realizar login automático.");
-            window.location.href = 'login.html';
+            window.location.href = '../login.html';
             return;
         }
 
@@ -93,7 +93,7 @@ async function finalizarCadastro(event) {
 
         if (!resAddress.ok) {
             alert("Erro ao cadastrar endereço. Conecte-se e tente novamente.");
-            window.location.href = 'login.html';
+            window.location.href = '../login.html';
             return;
         }
 
@@ -118,9 +118,9 @@ async function finalizarCadastro(event) {
 
         // Redirecionamento com base no cargo
         if (currentUser.role === 'ADMINISTRADOR' || currentUser.role === 'LABORATORISTA') {
-            window.location.href = 'dashboard.html';
+            window.location.href = '../Dashboards/dashboard.html';
         } else {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
 
     } catch (e) {

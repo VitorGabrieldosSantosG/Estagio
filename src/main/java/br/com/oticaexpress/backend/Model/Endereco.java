@@ -17,7 +17,7 @@ public class Endereco {
     private Long id;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "endereco")
+    @OneToOne(mappedBy = "endereco", fetch = FetchType.LAZY)
     @JsonIgnore
     private Usuario usarioId;
 

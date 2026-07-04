@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cart = JSON.parse(localStorage.getItem('otica_cart') || '[]');
     if (cart.length === 0) {
         alert("O seu carrinho está vazio! Adicione algum produto para finalizar.");
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';
         return;
     }
 

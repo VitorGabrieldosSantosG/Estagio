@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import br.com.oticaexpress.backend.Model.Enum.EnumRoleUsuario;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -21,7 +22,8 @@ public class Usuario {
     private String cpf;
     private String telefone;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usarioId"})  
     private Endereco endereco;

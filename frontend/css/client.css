@@ -1,0 +1,224 @@
+/* ============================================================
+   ÓTICA EXPRESS — CLIENT CSS
+   Inclui: checkout, pedidos do cliente, tela de sucesso.
+   Importado por: checkout, pedidos, sucesso.
+   Obs: form-group já definido em auth.css (compartilhado).
+   ============================================================ */
+
+/* --- TELA FINALIZAÇÃO (CHECKOUT) --- */
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 30px;
+}
+
+.checkout-forms {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.checkout-card {
+    background: var(--branco);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+}
+
+.checkout-card h2 {
+    color: var(--azul-escuro);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1.5px solid var(--borda);
+    padding-bottom: 10px;
+}
+
+.form-group-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.summary-gray-box {
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--cinza-escuro);
+    line-height: 1.6;
+}
+
+.summary-gray-box strong {
+    color: var(--azul-escuro);
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.95rem;
+}
+
+.summary-details p {
+    display: flex;
+    justify-content: space-between;
+    color: var(--cinza-escuro);
+}
+
+.summary-details p span {
+    font-weight: 600;
+}
+
+.summary-divider {
+    border: 0;
+    border-top: 1px dashed var(--cinza-light);
+    margin: 10px 0;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #10b981;
+    margin-bottom: 20px;
+}
+
+.receita-upload {
+    background: #f9fafb;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.receita-upload label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    color: var(--azul-claro);
+}
+
+.receita-upload input[type="file"] {
+    border: none;
+    padding: 5px 0;
+    font-size: 0.85rem;
+}
+
+.receita-status {
+    font-size: 0.75rem;
+    color: #059669;
+    font-weight: 500;
+    margin-top: 8px;
+}
+
+.btn-green-submit {
+    background-color: #00c497;
+    color: var(--branco);
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.btn-green-submit:hover {
+    background-color: #00aa7c;
+}
+
+/* --- TELA COMPRA FINALIZADA (SUCESSO) --- */
+.success-card {
+    background: var(--branco);
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 50px 30px;
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 5.5rem;
+    color: #10b981;
+    margin-bottom: 25px;
+}
+
+.success-card p {
+    font-size: 1.05rem;
+    color: var(--cinza-escuro);
+    line-height: 1.7;
+    font-weight: 500;
+}
+
+/* --- HISTÓRICO DE PEDIDOS CLIENTE --- */
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.order-client-card {
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.order-client-img {
+    width: 65px; height: 65px;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-client-img span {
+    color: rgba(255,255,255,0.2);
+    font-size: 1.5rem;
+}
+
+.order-client-info {
+    flex: 1;
+}
+
+.order-client-info h3 {
+    font-size: 1.1rem;
+    color: var(--azul-escuro);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.order-client-info p {
+    font-size: 0.85rem;
+    color: var(--cinza-escuro);
+    margin-bottom: 3px;
+}
+
+.order-client-status {
+    font-size: 0.95rem;
+    color: var(--cinza-escuro);
+}
+
+.order-client-status span {
+    font-weight: 600;
+    font-style: italic;
+}

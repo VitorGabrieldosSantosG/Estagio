@@ -55,11 +55,7 @@ function renderizarCatalogo(produtos) {
                     <span class="product-card-price">${precoFormatado}</span>
                     <p class="product-card-installments">ou 10X de ${precoParcela}</p>
                 </div>
-                <div class="color-circles">
-                    <div class="color-circle" style="background-color: #1a1a1a;"></div>
-                    <div class="color-circle" style="background-color: #795548;"></div>
-                    <div class="color-circle" style="background-color: #0d47a1;"></div>
-                </div>
+                <span class="product-color-badge"> ${prod.cor || 'Não informado'}</span>
                 <button class="btn-orange-cart" onclick="adicionarAoCarrinho(${prod.id})">
                     <span class="material-icons">add_shopping_cart</span> Adicionar ao carrinho
                 </button>

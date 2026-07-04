@@ -1,0 +1,122 @@
+/* ============================================================
+   ÓTICA EXPRESS — AUTH CSS
+   Inclui: auth-card, form-group, botões de cadastro/login.
+   Importado por: login, cadastro, cadastro-endereco, cadastro-senha.
+   ============================================================ */
+
+/* --- CARD DE AUTENTICAÇÃO --- */
+.auth-card {
+    background: var(--branco);
+    max-width: 460px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: var(--sombra-card);
+    border: 1px solid var(--borda);
+}
+
+.auth-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.auth-logo-icon {
+    font-size: 3rem;
+    color: var(--azul-claro);
+    border: 3px solid #10b981;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.auth-logo h2 {
+    color: var(--azul-escuro);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--cinza-escuro);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* --- FORMULÁRIOS --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--cinza-escuro);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--verde-cadastro);
+    box-shadow: 0 0 0 3px rgba(0, 196, 151, 0.1);
+}
+
+.form-group-row {
+    display: flex;
+    gap: 15px;
+}
+
+/* --- BOTÃO PRINCIPAL (VERDE) --- */
+.btn-primary {
+    background-color: var(--verde-cadastro);
+    color: var(--branco);
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: var(--verde-hover);
+}
+
+/* --- RODAPÉ DO FORMULÁRIO --- */
+.auth-footer-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--cinza-light);
+}
+
+.auth-footer-text a {
+    color: var(--verde-cadastro);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer-text a:hover {
+    text-decoration: underline;
+}

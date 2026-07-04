@@ -1,0 +1,288 @@
+/* ============================================================
+   ÓTICA EXPRESS — STORE CSS
+   Inclui: catálogo de produtos, cards, badge de cor,
+   página de detalhes do produto.
+   Importado por: index, detalhes.
+   ============================================================ */
+
+/* --- GRID DE PRODUTOS (CATÁLOGO) --- */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.product-card {
+    background: var(--branco);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.product-card-img {
+    height: 200px;
+    background-color: #2b2b2b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.product-card-img img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.product-card-img .no-img-placeholder {
+    color: rgba(255,255,255,0.2);
+    font-size: 3rem;
+}
+
+.product-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.product-card-type {
+    font-size: 0.75rem;
+    color: var(--cinza-light);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.product-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--azul-escuro);
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.product-card-title:hover {
+    color: var(--azul-claro);
+}
+
+.product-card-price-row {
+    margin-bottom: 15px;
+}
+
+.product-card-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.product-card-installments {
+    font-size: 0.75rem;
+    color: var(--cinza-escuro);
+    margin-top: 2px;
+}
+
+/* --- BADGE DE COR DO PRODUTO --- */
+.product-color-badge {
+    display: inline-block;
+    background: #f3f4f6;
+    border: 1px solid var(--borda);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cinza-escuro);
+    margin-bottom: 18px;
+}
+
+/* --- BOTÃO CARRINHO --- */
+.btn-orange-cart {
+    background-color: var(--laranja-carrinho);
+    color: var(--branco);
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    transition: background 0.2s;
+    margin-top: auto;
+}
+
+.btn-orange-cart:hover {
+    background-color: var(--laranja-hover);
+}
+
+/* --- TELA DETALHES DO PRODUTO --- */
+.product-detail-card {
+    background: var(--branco);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+}
+
+.detail-images-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main-image-box {
+    height: 350px;
+    background-color: #2b2b2b;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.main-image-box img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.thumbnail-list {
+    display: flex;
+    gap: 10px;
+}
+
+.thumb-box {
+    flex: 1;
+    height: 70px;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-box.active {
+    border-color: var(--laranja-carrinho);
+}
+
+.thumb-box img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.description-section {
+    margin-top: 25px;
+}
+
+.description-section h3 {
+    font-size: 1.05rem;
+    color: var(--azul-escuro);
+    margin-bottom: 10px;
+}
+
+.description-card {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+    color: var(--cinza-escuro);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.detail-info-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-info-section h1 {
+    color: var(--azul-escuro);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.detail-size {
+    font-size: 0.95rem;
+    color: var(--cinza-escuro);
+    margin-bottom: 15px;
+}
+
+.detail-size span {
+    font-weight: 600;
+}
+
+/* --- BADGE DE COR NA TELA DE DETALHES --- */
+.detail-color-section {
+    margin-bottom: 30px;
+}
+
+.detail-color-section p {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--cinza-escuro);
+}
+
+.detail-color-badge {
+    display: inline-block;
+    background: #f3f4f6;
+    border: 1px solid var(--borda);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cinza-texto);
+}
+
+.price-section {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--borda);
+    margin-bottom: 25px;
+}
+
+.price-section p {
+    font-size: 0.85rem;
+    color: var(--cinza-light);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.price-section h2 {
+    font-size: 2rem;
+    color: #10b981;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.price-section .installments {
+    font-size: 0.95rem;
+    color: var(--cinza-escuro);
+    font-weight: 400;
+}

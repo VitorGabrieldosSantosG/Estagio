@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user.role === 'CLIENTE') {
             window.location.href = 'index.html';
         } else {
-            window.location.href = 'dashboard.html';
+            window.location.href = './Dashboards/dashboard.html';
         }
     }
     updateHeader();
@@ -44,7 +44,7 @@ async function realizarLogin(event) {
 
             // Redirecionamento baseado na role
             if (currentUser.role === 'ADMINISTRADOR' || currentUser.role === 'LABORATORISTA') {
-                window.location.href = 'dashboard.html';
+                window.location.href = './Dashboards/dashboard.html';
             } else {
                 window.location.href = 'index.html';
             }

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ótica Express - Endereço de Entrega</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/auth.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +13,7 @@
     <!-- TOP BAR -->
     <header class="store-header">
         <div class="header-container">
-            <div class="header-logo" onclick="window.location.href='index.html'">
+            <div class="header-logo" onclick="window.location.href='../index.html'">
                 <div class="logo-box">
                     <span class="material-icons logo-icon">visibility</span>
                     <div class="logo-text">
@@ -31,7 +32,7 @@
                 <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos" style="display:none;">
                     <span class="material-icons">assignment</span>
                 </button>
-                <button class="action-btn" title="Carrinho" onclick="window.location.href='checkout.html'">
+                <button class="action-btn" title="Carrinho" onclick="window.location.href='../Cliente/checkout.html'">
                     <span class="material-icons">shopping_cart</span>
                     <span class="cart-badge" id="carrinhoQuantidade">0</span>
                 </button>
@@ -101,7 +102,7 @@
         </main>
     </div>
 
-    <script src="auth.js"></script>
+    <script src="../auth.js"></script>
     <script src="cadastro-endereco.js"></script>
 </body>
 </html>
