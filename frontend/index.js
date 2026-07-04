@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function carregarProdutos() {
     try {
         const response = await fetch(API_ARMACAO);
-        localProducts = await response.json();
+        const todos = await response.json();
+        // Guardar apenas produtos com estoque disponível
+        localProducts = todos.filter(p => p.quantidade != null && p.quantidade > 0);
         renderizarCatalogo(localProducts);
     } catch (error) {
         console.error("Erro ao carregar catálogo:", error);
@@ -23,7 +25,7 @@ function renderizarCatalogo(produtos) {
     grid.innerHTML = '';
 
     if (produtos.length === 0) {
-        grid.innerHTML = '<p class="no-products">Nenhuma armação localizada.</p>';
+        grid.innerHTML = '<p class="no-products">Nenhuma armação disponível no momento.</p>';
         return;
     }
 
@@ -38,7 +40,7 @@ function renderizarCatalogo(produtos) {
         // Imagem
         let imgHtml = `<span class="material-icons no-img-placeholder">glasses</span>`;
         if (prod.imagemUrl) {
-            imgHtml = `<img src="${prod.imagemUrl}" alt="${prod.modelo}">`;
+            imgHtml = `<img src="${prod.imagemUrl}" alt="${prod.modelo}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="material-icons no-img-placeholder" style="display:none;">glasses</span>`;
         }
 
         // Tipo com tratamento de nulo corrigido
@@ -76,7 +78,7 @@ function filtrarCatalogo() {
 }
 
 function verDetalhes(id) {
-    window.location.href = `detalhes.html?id=${id}`;
+    window.location.href = `Cliente/detalhes.html?id=${id}`;
 }
 
 function adicionarAoCarrinho(productId) {

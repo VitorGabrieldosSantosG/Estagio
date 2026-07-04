@@ -94,10 +94,10 @@ function updateHeader() {
             btnPedidos.style.display = 'flex';
             if (user.role !== 'CLIENTE') {
                 btnPedidos.title = "Painel de Gestão";
-                btnPedidos.onclick = () => { window.location.href = './Dashboards/dashboard.html'; };
+                btnPedidos.onclick = () => { window.location.href = rootPath() + 'Dashboards/dashboard.html'; };
             } else {
                 btnPedidos.title = "Meus Pedidos";
-                btnPedidos.onclick = () => { window.location.href = './Cliente/pedidos.html'; };
+                btnPedidos.onclick = () => { window.location.href = rootPath() + 'Cliente/pedidos.html'; };
             }
         } else {
             btnPedidos.style.display = 'none';

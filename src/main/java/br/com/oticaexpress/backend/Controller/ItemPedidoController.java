@@ -57,10 +57,22 @@ public class ItemPedidoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Produto (armação) não encontrado!");
         }
 
+        Armacao armacao = buscaArmacao.get();
+
+        // Validar estoque disponível
+        if (armacao.getQuantidade() == null || armacao.getQuantidade() <= 0) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Produto '" + armacao.getMarca() + " " + armacao.getModelo() + "' está sem estoque disponível!");
+        }
+
         ItemPedido itemPedidoModel = new ItemPedido();
         BeanUtils.copyProperties(itemPedidoDTO, itemPedidoModel);
         itemPedidoModel.setPedidoId(buscaPedido.get());
-        itemPedidoModel.setProdutoId(buscaArmacao.get());
+        itemPedidoModel.setProdutoId(armacao);
+
+        // Decrementar estoque
+        armacao.setQuantidade(armacao.getQuantidade() - 1);
+        armacaoRepository.save(armacao);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(itemPedidoRepository.save(itemPedidoModel));
     }

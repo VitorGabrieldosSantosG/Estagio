@@ -52,7 +52,7 @@ async function carregarDadosUsuario() {
         document.getElementById('checkBairro').value = end.bairro;
     } else {
         alert("Endereço de entrega não localizado! Por favor, cadastre seu endereço.");
-        window.location.href = 'cadastro-endereco.html';
+        window.location.href = '../Cadastros/cadastro-endereco.html';
         return;
     }
 
@@ -130,7 +130,7 @@ async function finalizarCompra() {
                 ativo: true
             };
 
-            await fetch(API_ITEM_PEDIDO, {
+            const itemResp = await fetch(API_ITEM_PEDIDO, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -138,6 +138,15 @@ async function finalizarCompra() {
                 },
                 body: JSON.stringify(itemPayload)
             });
+
+            if (!itemResp.ok) {
+                const erroItem = await itemResp.text();
+                // Produto sem estoque (409) ou outro erro — avisar e parar
+                alert(`Erro ao processar item do carrinho: ${erroItem}\n\nSeu pedido foi registrado, mas alguns itens podem não ter sido processados. Por favor, entre em contato.`);
+                localStorage.removeItem('otica_cart');
+                window.location.href = 'sucesso.html';
+                return;
+            }
         }
 
         // Limpar carrinho local

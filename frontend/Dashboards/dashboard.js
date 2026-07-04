@@ -136,21 +136,28 @@ async function abrirChecklistPedido(id) {
 
         document.getElementById('checklistTitulo').innerText = `Pedido #${ped.id}`;
 
+        const isAdmin = user.role === 'ADMINISTRADOR';
         const isLaboratorista = user.role === 'LABORATORISTA';
         const currentIdx = checklistFluxo.indexOf(ped.status);
 
+        // Statuses que cada role pode editar
+        const adminStatuses = ['EMBALAR', 'ENVIO_ENTREGA', 'ENTREGUE_CLIENTE'];
+        const labStatuses = ['SEPARACAO_ARMACAO', 'FABRICACAO_LENTE', 'MONTAGEM_OCULOS', 'CONTROLE_QUALIDADE'];
+
         checklistFluxo.forEach((status, idx) => {
             const chk = document.getElementById(`chkStatus_${status}`);
-            if (chk) {
-                // Se o status do pedido já passou por esse passo, manter marcado
-                chk.checked = (idx <= currentIdx);
+            if (!chk) return;
 
-                // Configurar habilitado / desabilitado
-                if (isLaboratorista && ['ENVIO_ENTREGA', 'ENTREGUE_CLIENTE'].includes(status)) {
-                    chk.disabled = true;
-                } else {
-                    chk.disabled = false;
-                }
+            // Marcar conforme progresso atual
+            chk.checked = (idx <= currentIdx);
+
+            // Habilitar apenas os statuses da role correspondente
+            if (isAdmin) {
+                chk.disabled = !adminStatuses.includes(status);
+            } else if (isLaboratorista) {
+                chk.disabled = !labStatuses.includes(status);
+            } else {
+                chk.disabled = true;
             }
         });
 
