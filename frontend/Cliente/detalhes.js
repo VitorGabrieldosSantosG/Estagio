@@ -50,7 +50,7 @@ async function carregarDetalhesProduto(id) {
         const cor = currentProduct.cor || 'Não informado';
         const badge = document.createElement('span');
         badge.className = 'detail-color-badge';
-        badge.textContent = '🎨 ' + cor;
+        badge.textContent =  cor;
         coresDiv.appendChild(badge);
 
     } catch (error) {
