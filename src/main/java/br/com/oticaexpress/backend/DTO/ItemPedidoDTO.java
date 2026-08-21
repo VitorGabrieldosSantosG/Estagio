@@ -7,7 +7,7 @@ public record ItemPedidoDTO(
     @NotNull(message = "O ID do pedido não pode ser nulo")
     Long pedidoId,
 
-    @NotNull(message = "O ID do produto (armação) não pode ser nulo")
+    @NotNull(message = "O ID do item de produto não pode ser nulo")
     Long produtoId,
 
     @NotBlank(message = "O campo marca não pode ser nulo ou vazio")

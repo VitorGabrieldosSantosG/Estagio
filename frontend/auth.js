@@ -5,6 +5,7 @@ const API_USUARIO = `${BASE_URL}/usuario`;
 const API_ENDERECO = `${BASE_URL}/endereco`;
 const API_PEDIDO = `${BASE_URL}/pedido`;
 const API_ITEM_PEDIDO = `${BASE_URL}/item-pedido`;
+const API_ITEM_PRODUTO = `${BASE_URL}/item-produto`;
 
 // Calcula o prefixo de caminho correto baseado na profundidade da pasta atual
 // Ex: em Cadastros/ ou Cliente/ → '../'  |  em frontend/ → ''

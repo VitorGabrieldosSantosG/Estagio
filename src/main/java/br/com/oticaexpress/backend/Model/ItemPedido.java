@@ -29,7 +29,7 @@ public class ItemPedido {
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
-    private Armacao produtoId;
+    private ItemProduto produtoId;
 
     private String marca;
     private String modelo;

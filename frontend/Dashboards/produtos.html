@@ -38,11 +38,18 @@
 
         <!-- CONTEÚDO MAIN -->
         <main class="main-content">
-            <div class="card-produtos animate-fade">
+            <!-- TABS DE NAVEGAÇÃO -->
+            <div class="tabs-container animate-fade" style="display:flex;gap:10px;margin-bottom:20px;">
+                <button id="tabArmacoes" class="btn-action-primary" onclick="trocarAba('armacoes')" style="padding:10px 20px;">Armações</button>
+                <button id="tabItensProduto" class="btn-cinza" onclick="trocarAba('itensProduto')" style="padding:10px 20px;">Itens de Produto (Estoque)</button>
+            </div>
+
+            <!-- ABA ARMAÇÕES -->
+            <div id="abaArmacoes" class="card-produtos animate-fade">
                 <div class="card-header">
-                    <h2>Produtos</h2>
+                    <h2>Armações</h2>
                     <button id="btnAbrirModal" class="btn-verde" onclick="abrirModalProduto()">
-                        + Adicionar produto
+                        + Adicionar armação
                     </button>
                 </div>
 
@@ -66,15 +73,48 @@
                     </table>
                 </div>
             </div>
+
+            <!-- ABA ITENS DE PRODUTO -->
+            <div id="abaItensProduto" class="card-produtos animate-fade" style="display:none;">
+                <div class="card-header">
+                    <h2>Itens de Produto (Estoque)</h2>
+                    <button class="btn-verde" onclick="abrirModalItemProduto()">
+                        + Adicionar item de produto
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="tabelaItensProduto">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Armação (ID)</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Cor</th>
+                                <th>Tamanho</th>
+                                <th>Material</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaItens">
+                            <!-- Inserido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- MODAL DE PRODUTOS -->
+    <!-- MODAL DE ARMAÇÕES -->
     <div id="modalProduto" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
                 <span class="material-icons">inventory_2</span>
-                <h2 id="modalTitulo">Adicionar produto</h2>
+                <h2 id="modalTitulo">Adicionar armação</h2>
             </div>
             <form id="formProduto" onsubmit="salvarProduto(event)">
                 <input type="hidden" id="produtoId">
@@ -111,7 +151,6 @@
                         <select id="inputTipo" required>
                             <option value="MASCULINO">Masculino</option>
                             <option value="FEMININO">Feminino</option>
-                            <option value="INFANTIL">Infantil</option>
                             <option value="UNISSEX" selected>Unissex</option>
                         </select>
                     </div>
@@ -140,7 +179,83 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cinza" onclick="fecharModalProduto()">Cancelar</button>
-                    <button type="submit" id="btnSalvar" class="btn-verde">Salvar produto</button>
+                    <button type="submit" id="btnSalvar" class="btn-verde">Salvar armação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE ITENS DE PRODUTO -->
+    <div id="modalItemProduto" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="material-icons">category</span>
+                <h2 id="modalTituloItem">Adicionar item de produto</h2>
+            </div>
+            <form id="formItemProduto" onsubmit="salvarItemProduto(event)">
+                <input type="hidden" id="itemProdutoId">
+
+                <div class="form-group">
+                    <label>Armação (ID):</label>
+                    <input type="number" id="inputItemArmacaoId" placeholder="ID da armação vinculada" required>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Marca:</label>
+                        <input type="text" id="inputItemMarca" placeholder="Ex: Ray-Ban" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo:</label>
+                        <input type="text" id="inputItemModelo" placeholder="Ex: Aviador" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Cor:</label>
+                        <input type="text" id="inputItemCor" placeholder="Ex: Preto" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tamanho:</label>
+                        <input type="text" id="inputItemTamanho" placeholder="Ex: M" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Material:</label>
+                        <input type="text" id="inputItemMaterial" placeholder="Ex: Acetato" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo:</label>
+                        <select id="inputItemTipo">
+                            <option value="MASCULINO">Masculino</option>
+                            <option value="FEMININO">Feminino</option>
+                            <option value="UNISSEX" selected>Unissex</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label>Preço (R$):</label>
+                        <input type="number" id="inputItemPreco" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade:</label>
+                        <input type="number" id="inputItemQuantidade" min="0" placeholder="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>URL da Imagem:</label>
+                    <input type="url" id="inputItemImagemUrl" placeholder="https://site.com/imagem.jpg" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cinza" onclick="fecharModalItemProduto()">Cancelar</button>
+                    <button type="submit" id="btnSalvarItem" class="btn-verde">Salvar item</button>
                 </div>
             </form>
         </div>
