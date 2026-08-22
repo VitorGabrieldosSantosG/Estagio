@@ -23,8 +23,11 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    private final SecurityFilter securityFilter;
+
+    SecurityConfig(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

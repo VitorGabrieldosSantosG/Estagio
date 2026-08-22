@@ -1,6 +1,6 @@
 package br.com.oticaexpress.backend.DTO;
 
-import br.com.oticaexpress.backend.Model.Endereco;
+import br.com.oticaexpress.backend.DTO.Response.EnderecoResponseDTO;
 
 public record LoginResponseDTO(
     String token,
@@ -10,5 +10,5 @@ public record LoginResponseDTO(
     Long id,
     String cpf,
     String telefone,
-    Endereco endereco
+    EnderecoResponseDTO endereco
 ) {}

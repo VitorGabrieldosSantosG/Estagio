@@ -1,11 +1,12 @@
 package br.com.oticaexpress.backend.Service;
 
+import br.com.oticaexpress.backend.DTO.UsuarioAtualizacaoDTO;
 import br.com.oticaexpress.backend.DTO.UsuarioDTO;
+import br.com.oticaexpress.backend.DTO.Response.UsuarioResponseDTO;
 import br.com.oticaexpress.backend.Exception.RecursoNaoEncontradoException;
 import br.com.oticaexpress.backend.Exception.RegraNegocioException;
 import br.com.oticaexpress.backend.Model.Usuario;
 import br.com.oticaexpress.backend.Repository.IUsuarioRepository;
-import br.com.oticaexpress.backend.Util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,16 +21,19 @@ public class UsuarioService {
     private final IUsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+    public List<UsuarioResponseDTO> listarTodos() {
+        return usuarioRepository.findAll().stream()
+                .map(UsuarioResponseDTO::new)
+                .toList();
     }
 
-    public Usuario buscarPorId(Long id) {
-        return usuarioRepository.findById(id)
+    public UsuarioResponseDTO buscarPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não localizado"));
+        return new UsuarioResponseDTO(usuario);
     }
 
-    public Usuario criarUsuario(UsuarioDTO dto) {
+    public UsuarioResponseDTO criarUsuario(UsuarioDTO dto) {
         if (usuarioRepository.findByEmail(dto.email()).isPresent()) {
             throw new RegraNegocioException("E-mail já cadastrado!");
         }
@@ -41,20 +45,25 @@ public class UsuarioService {
         BeanUtils.copyProperties(dto, usuario);
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
         
-        return usuarioRepository.save(usuario);
+        Usuario salvo = usuarioRepository.save(usuario);
+        return new UsuarioResponseDTO(salvo);
     }
 
-    public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado) {
-        Usuario usuarioExistente = usuarioRepository.findById(id)
+    public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioAtualizacaoDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não localizado"));
 
-        if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isBlank() && 
-            !usuarioAtualizado.getSenha().equals(usuarioExistente.getSenha())) {
-            usuarioAtualizado.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
+        if (dto.nome() != null) usuario.setNome(dto.nome());
+        if (dto.email() != null) usuario.setEmail(dto.email());
+        if (dto.senha() != null && !dto.senha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(dto.senha()));
         }
+        if (dto.cpf() != null) usuario.setCpf(dto.cpf());
+        if (dto.telefone() != null) usuario.setTelefone(dto.telefone());
+        if (dto.role() != null) usuario.setRole(dto.role());
 
-        Utils.copyNonNullProperties(usuarioAtualizado, usuarioExistente);
-        return usuarioRepository.save(usuarioExistente);
+        Usuario salvo = usuarioRepository.save(usuario);
+        return new UsuarioResponseDTO(salvo);
     }
 
     public void deletarUsuario(Long id) {

@@ -6,18 +6,20 @@ import br.com.oticaexpress.backend.Model.Armacao;
 import br.com.oticaexpress.backend.Model.Enum.TipoArmacao;
 
 public record ArmacaoResponseDTO(
+        Long id,
         String cor,
         String material,
         String modelo,
         String marca,
         String tamanho,
         String descricao,
-        String imagemURL,
+        String imagemUrl,
         Integer quantidade,
-        TipoArmacao tipoArmacao,
+        TipoArmacao tipo,
         BigDecimal preco) {
     public ArmacaoResponseDTO(Armacao armacao) {
         this(
+                armacao.getId(),
                 armacao.getCor(),
                 armacao.getMaterial(),
                 armacao.getModelo(),

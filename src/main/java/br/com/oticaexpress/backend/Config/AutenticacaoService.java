@@ -16,8 +16,11 @@ import br.com.oticaexpress.backend.Repository.IUsuarioRepository;
 @Service
 public class AutenticacaoService implements UserDetailsService {
 
-    @Autowired
-    private IUsuarioRepository usuarioRepository;
+    private final IUsuarioRepository usuarioRepository;
+
+    AutenticacaoService(IUsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

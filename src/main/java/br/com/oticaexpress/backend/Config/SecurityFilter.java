@@ -20,11 +20,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private IUsuarioRepository usuarioRepository;
+    private final IUsuarioRepository usuarioRepository;
+
+    SecurityFilter(TokenService tokenService, IUsuarioRepository usuarioRepository) {
+        this.tokenService = tokenService;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

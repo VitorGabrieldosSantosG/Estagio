@@ -2,6 +2,7 @@ package br.com.oticaexpress.backend.Service;
 
 import br.com.oticaexpress.backend.DTO.LoginDTO;
 import br.com.oticaexpress.backend.DTO.LoginResponseDTO;
+import br.com.oticaexpress.backend.DTO.Response.EnderecoResponseDTO;
 import br.com.oticaexpress.backend.Model.Usuario;
 import br.com.oticaexpress.backend.Repository.IUsuarioRepository;
 import br.com.oticaexpress.backend.Config.TokenService;
@@ -27,6 +28,10 @@ public class AuthService {
 
         String token = tokenService.generateToken(usuario);
 
+        EnderecoResponseDTO enderecoDTO = usuario.getEndereco() != null
+                ? new EnderecoResponseDTO(usuario.getEndereco())
+                : null;
+
         return new LoginResponseDTO(
                 token,
                 usuario.getEmail(),
@@ -35,7 +40,7 @@ public class AuthService {
                 usuario.getId(),
                 usuario.getCpf(),
                 usuario.getTelefone(),
-                usuario.getEndereco()
+                enderecoDTO
         );
     }
 }

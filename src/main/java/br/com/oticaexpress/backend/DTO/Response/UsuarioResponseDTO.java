@@ -1,24 +1,25 @@
 package br.com.oticaexpress.backend.DTO.Response;
 
-import br.com.oticaexpress.backend.Model.Endereco;
+import br.com.oticaexpress.backend.Model.Enum.EnumRoleUsuario;
 import br.com.oticaexpress.backend.Model.Usuario;
 
 public record UsuarioResponseDTO(
+        Long id,
         String nome,
         String email,
-        String senha,
         String cpf,
         String telefone,
-        Endereco endereco) {
+        EnumRoleUsuario role,
+        EnderecoResponseDTO endereco) {
 
     public UsuarioResponseDTO(Usuario usuario) {
         this(
+                usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getSenha(),
                 usuario.getCpf(),
                 usuario.getTelefone(),
-                usuario.getEndereco());
+                usuario.getRole(),
+                usuario.getEndereco() != null ? new EnderecoResponseDTO(usuario.getEndereco()) : null);
     }
-
 }

@@ -4,6 +4,7 @@ import br.com.oticaexpress.backend.Model.Endereco;
 import br.com.oticaexpress.backend.Model.Enum.EnumEstado;
 
 public record EnderecoResponseDTO(
+        Long id,
         String cep,
         String rua,
         String cidade,
@@ -13,6 +14,7 @@ public record EnderecoResponseDTO(
         int numero) {
     public EnderecoResponseDTO(Endereco endereco) {
         this(
+            endereco.getId(),
             endereco.getCep(), 
             endereco.getRua(), 
             endereco.getCidade(), 

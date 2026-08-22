@@ -1,6 +1,8 @@
 package br.com.oticaexpress.backend.Service;
 
+import br.com.oticaexpress.backend.DTO.ItemPedidoAtualizacaoDTO;
 import br.com.oticaexpress.backend.DTO.ItemPedidoDTO;
+import br.com.oticaexpress.backend.DTO.Response.ItemPedidoResponseDTO;
 import br.com.oticaexpress.backend.Exception.RecursoNaoEncontradoException;
 import br.com.oticaexpress.backend.Exception.RegraNegocioException;
 import br.com.oticaexpress.backend.Model.ItemPedido;
@@ -9,7 +11,6 @@ import br.com.oticaexpress.backend.Model.Pedido;
 import br.com.oticaexpress.backend.Repository.IItemPedidoRepository;
 import br.com.oticaexpress.backend.Repository.IItemProdutoRepository;
 import br.com.oticaexpress.backend.Repository.IPedidoRepository;
-import br.com.oticaexpress.backend.Util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,19 @@ public class ItemPedidoService {
     private final IPedidoRepository pedidoRepository;
     private final IItemProdutoRepository itemProdutoRepository;
 
-    public List<ItemPedido> listarTodos() {
-        return itemPedidoRepository.findAll();
+    public List<ItemPedidoResponseDTO> listarTodos() {
+        return itemPedidoRepository.findAll().stream()
+                .map(ItemPedidoResponseDTO::new)
+                .toList();
     }
 
-    public ItemPedido buscarPorId(Long id) {
-        return itemPedidoRepository.findById(id)
+    public ItemPedidoResponseDTO buscarPorId(Long id) {
+        ItemPedido itemPedido = itemPedidoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Item do pedido não encontrado!"));
+        return new ItemPedidoResponseDTO(itemPedido);
     }
 
-    public ItemPedido criarItemPedido(ItemPedidoDTO dto) {
+    public ItemPedidoResponseDTO criarItemPedido(ItemPedidoDTO dto) {
         Pedido pedido = pedidoRepository.findById(dto.pedidoId())
                 .orElseThrow(() -> new RegraNegocioException("Pedido não encontrado!"));
                 
@@ -53,15 +57,22 @@ public class ItemPedidoService {
         itemProduto.setQuantidade(itemProduto.getQuantidade() - 1);
         itemProdutoRepository.save(itemProduto);
 
-        return itemPedidoRepository.save(itemPedido);
+        ItemPedido salvo = itemPedidoRepository.save(itemPedido);
+        return new ItemPedidoResponseDTO(salvo);
     }
 
-    public ItemPedido atualizarItemPedido(Long id, ItemPedido itemPedidoAtualizado) {
-        ItemPedido itemPedidoExistente = itemPedidoRepository.findById(id)
+    public ItemPedidoResponseDTO atualizarItemPedido(Long id, ItemPedidoAtualizacaoDTO dto) {
+        ItemPedido itemPedido = itemPedidoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Item do pedido não encontrado!"));
-                
-        Utils.copyNonNullProperties(itemPedidoAtualizado, itemPedidoExistente);
-        return itemPedidoRepository.save(itemPedidoExistente);
+
+        if (dto.marca() != null) itemPedido.setMarca(dto.marca());
+        if (dto.modelo() != null) itemPedido.setModelo(dto.modelo());
+        if (dto.tamanho() != null) itemPedido.setTamanho(dto.tamanho());
+        if (dto.cor() != null) itemPedido.setCor(dto.cor());
+        if (dto.ativo() != null) itemPedido.setAtivo(dto.ativo());
+
+        ItemPedido salvo = itemPedidoRepository.save(itemPedido);
+        return new ItemPedidoResponseDTO(salvo);
     }
 
     public void deletarItemPedido(Long id) {
