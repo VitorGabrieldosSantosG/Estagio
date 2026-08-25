@@ -6,170 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = getLoggedUser();
     document.getElementById('sidebarUserName').innerText = `${user.nome} (${user.role.toLowerCase()})`;
 
-    carregarEstoqueProdutos();
-    carregarItensProduto();
+    carregarVariacoes();
 });
 
 // =============================================
-//  CONTROLE DE ABAS
+//  LISTAGEM DE VARIAÇÕES (ITENS DE PRODUTO)
 // =============================================
-function trocarAba(aba) {
-    const abaArmacoes = document.getElementById('abaArmacoes');
-    const abaItens = document.getElementById('abaItensProduto');
-    const tabArmacoes = document.getElementById('tabArmacoes');
-    const tabItens = document.getElementById('tabItensProduto');
-
-    if (aba === 'armacoes') {
-        abaArmacoes.style.display = 'block';
-        abaItens.style.display = 'none';
-        tabArmacoes.className = 'btn-action-primary';
-        tabItens.className = 'btn-cinza';
-    } else {
-        abaArmacoes.style.display = 'none';
-        abaItens.style.display = 'block';
-        tabArmacoes.className = 'btn-cinza';
-        tabItens.className = 'btn-action-primary';
-    }
-}
-
-// =============================================
-//  ARMAÇÕES (CRUD existente)
-// =============================================
-async function carregarEstoqueProdutos() {
-    const user = getLoggedUser();
-    if (!user) return;
-
-    try {
-        const response = await fetch(API_ARMACAO);
-        const produtos = await response.json();
-        const tbody = document.getElementById('corpoTabela');
-        tbody.innerHTML = '';
-
-        produtos.forEach(prod => {
-            const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(prod.preco);
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>#${prod.id}</td>
-                <td>${prod.marca}</td>
-                <td>${prod.modelo}</td>
-                <td>${prod.cor}</td>
-                <td>${prod.tamanho}</td>
-                <td>${precoFormatado}</td>
-                <td>${prod.quantidade}</td>
-                <td>
-                    <button onclick='prepararEdicaoProduto(${JSON.stringify(prod)})' class="btn-icone" title="Editar">✏️</button>
-                    <button onclick="deletarProdutoEstoque(${prod.id})" class="btn-icone" title="Excluir">🗑️</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    } catch (error) {
-        console.error("Erro ao carregar estoque:", error);
-    }
-}
-
-async function salvarProduto(event) {
-    event.preventDefault();
-    const user = getLoggedUser();
-    if (!user || user.role !== 'ADMINISTRADOR') return;
-
-    const id = document.getElementById('produtoId').value;
-    
-    const armacao = {
-        marca: document.getElementById('inputMarca').value,
-        modelo: document.getElementById('inputModelo').value,
-        cor: document.getElementById('inputCor').value,
-        tamanho: document.getElementById('inputTamanho').value,
-        quantidade: parseInt(document.getElementById('inputEstoque').value),
-        preco: parseFloat(document.getElementById('inputPreco').value),
-        material: document.getElementById('inputMaterial').value,
-        tipo: document.getElementById('inputTipo').value,
-        imagemUrl: document.getElementById('inputImagemUrl').value,
-        descricao: document.getElementById('inputDescricao').value
-    };
-
-    const metodo = id ? 'PUT' : 'POST';
-    const urlFinal = id ? `${API_ARMACAO}/${id}` : API_ARMACAO;
-
-    try {
-        const response = await fetch(urlFinal, {
-            method: metodo,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify(armacao)
-        });
-
-        if (response.ok) {
-            fecharModalProduto();
-            carregarEstoqueProdutos(); 
-        } else {
-            const erro = await response.text();
-            alert("Atenção: " + erro);
-        }
-    } catch (error) {
-        console.error("Erro ao salvar produto:", error);
-    }
-}
-
-async function deletarProdutoEstoque(id) {
-    const user = getLoggedUser();
-    if (!user || user.role !== 'ADMINISTRADOR') return;
-
-    if (confirm('Tem certeza que deseja excluir esta armação?')) {
-        try {
-            const response = await fetch(`${API_ARMACAO}/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${user.token}` }
-            });
-            if (response.ok) {
-                carregarEstoqueProdutos();
-            } else {
-                const erro = await response.text();
-                alert("Erro ao excluir: " + erro);
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
-}
-
-function abrirModalProduto() {
-    document.getElementById('formProduto').reset();
-    document.getElementById('produtoId').value = '';
-    document.getElementById('modalTitulo').innerText = 'Adicionar armação';
-    document.getElementById('btnSalvar').innerText = 'Salvar armação';
-    document.getElementById('modalProduto').style.display = 'flex';
-}
-
-function fecharModalProduto() {
-    document.getElementById('modalProduto').style.display = 'none';
-}
-
-window.prepararEdicaoProduto = function(prod) {
-    document.getElementById('produtoId').value = prod.id;
-    document.getElementById('inputMarca').value = prod.marca;
-    document.getElementById('inputModelo').value = prod.modelo;
-    document.getElementById('inputCor').value = prod.cor;
-    document.getElementById('inputTamanho').value = prod.tamanho;
-    document.getElementById('inputPreco').value = prod.preco;
-    document.getElementById('inputEstoque').value = prod.quantidade;
-    document.getElementById('inputMaterial').value = prod.material || '';
-    document.getElementById('inputTipo').value = prod.tipo || 'UNISSEX';
-    document.getElementById('inputImagemUrl').value = prod.imagemUrl || '';
-    document.getElementById('inputDescricao').value = prod.descricao || '';
-    
-    document.getElementById('modalTitulo').innerText = 'Editar armação';
-    document.getElementById('btnSalvar').innerText = 'Salvar alteração';
-    document.getElementById('modalProduto').style.display = 'flex';
-};
-
-// =============================================
-//  ITENS DE PRODUTO (NOVO - Estoque)
-// =============================================
-async function carregarItensProduto() {
+async function carregarVariacoes() {
     const user = getLoggedUser();
     if (!user) return;
 
@@ -183,15 +26,13 @@ async function carregarItensProduto() {
 
         itens.forEach(item => {
             const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.preco || 0);
-            const armacaoId = item.armacao ? item.armacao.id : '-';
+            const armacaoNome = `${item.marca || '-'} ${item.modelo || '-'}`;
             const tipoBonito = item.tipo ? (item.tipo.charAt(0) + item.tipo.slice(1).toLowerCase()) : '-';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>#${item.id}</td>
-                <td>${armacaoId}</td>
-                <td>${item.marca || '-'}</td>
-                <td>${item.modelo || '-'}</td>
+                <td>${armacaoNome}</td>
                 <td>${item.cor || '-'}</td>
                 <td>${item.tamanho || '-'}</td>
                 <td>${item.material || '-'}</td>
@@ -199,8 +40,8 @@ async function carregarItensProduto() {
                 <td>${item.quantidade || 0}</td>
                 <td>${tipoBonito}</td>
                 <td>
-                    <button onclick='prepararEdicaoItemProduto(${JSON.stringify(item)})' class="btn-icone" title="Editar">✏️</button>
-                    <button onclick="deletarItemProduto(${item.id})" class="btn-icone" title="Excluir">🗑️</button>
+                    <button onclick='abrirModalEditarItem(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="btn-icone" title="Editar">✏️</button>
+                    <button onclick="deletarVariacao(${item.id})" class="btn-icone" title="Excluir">🗑️</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -210,63 +51,253 @@ async function carregarItensProduto() {
     }
 }
 
-async function salvarItemProduto(event) {
+// =============================================
+//  MODAL DE CRIAÇÃO UNIFICADA (ARMAÇÃO + ITENS)
+// =============================================
+function abrirModalNovoProduto() {
+    document.getElementById('formNovoProduto').reset();
+    document.getElementById('variacoesContainer').innerHTML = '';
+    adicionarVariacao(); // Adiciona a primeira linha vazia por padrão
+    document.getElementById('modalNovoProduto').style.display = 'flex';
+}
+
+function fecharModalNovoProduto() {
+    document.getElementById('modalNovoProduto').style.display = 'none';
+}
+
+function adicionarVariacao() {
+    const container = document.getElementById('variacoesContainer');
+    const div = document.createElement('div');
+    div.className = 'variacao-row';
+    
+    div.innerHTML = `
+        <div class="form-group">
+            <label>Cor:</label>
+            <input type="text" class="var-cor" placeholder="Ex: Preto" required>
+        </div>
+        <div class="form-group">
+            <label>Tamanho:</label>
+            <input type="text" class="var-tamanho" placeholder="Ex: M" required>
+        </div>
+        <div class="form-group">
+            <label>Preço:</label>
+            <input type="number" step="0.01" min="0" class="var-preco" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+            <label>Qtd:</label>
+            <input type="number" min="0" class="var-qtd" placeholder="0" required>
+        </div>
+        <div class="form-group">
+            <label>URL Imagem:</label>
+            <input type="url" class="var-img" placeholder="https://..." required>
+        </div>
+        <button type="button" class="btn-remover-variacao" onclick="removerVariacao(this)" title="Remover variação">
+            <span class="material-icons">delete</span>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function removerVariacao(btn) {
+    const container = document.getElementById('variacoesContainer');
+    if (container.children.length > 1) {
+        btn.closest('.variacao-row').remove();
+    } else {
+        alert("O produto precisa ter pelo menos uma variação.");
+    }
+}
+
+async function salvarProdutoComVariacoes(event) {
     event.preventDefault();
     const user = getLoggedUser();
     if (!user || user.role !== 'ADMINISTRADOR') return;
 
-    const id = document.getElementById('itemProdutoId').value;
+    // 1. Coletar dados da armação base
+    const baseMarca = document.getElementById('inputBaseMarca').value;
+    const baseModelo = document.getElementById('inputBaseModelo').value;
+    const baseMaterial = document.getElementById('inputBaseMaterial').value;
+    const baseTipo = document.getElementById('inputBaseTipo').value;
+    const baseDescricao = document.getElementById('inputBaseDescricao').value;
 
-    const itemProduto = {
-        armacaoId: parseInt(document.getElementById('inputItemArmacaoId').value),
-        marca: document.getElementById('inputItemMarca').value,
-        modelo: document.getElementById('inputItemModelo').value,
-        cor: document.getElementById('inputItemCor').value,
-        tamanho: document.getElementById('inputItemTamanho').value,
-        material: document.getElementById('inputItemMaterial').value,
-        tipo: document.getElementById('inputItemTipo').value,
-        preco: parseFloat(document.getElementById('inputItemPreco').value),
-        quantidade: parseInt(document.getElementById('inputItemQuantidade').value),
-        imagemUrl: document.getElementById('inputItemImagemUrl').value
+    // 2. Coletar variações
+    const variacoesRows = document.querySelectorAll('.variacao-row');
+    const variacoes = [];
+    let primeiraImagem = '';
+
+    variacoesRows.forEach((row, index) => {
+        const cor = row.querySelector('.var-cor').value;
+        const tamanho = row.querySelector('.var-tamanho').value;
+        const preco = parseFloat(row.querySelector('.var-preco').value);
+        const quantidade = parseInt(row.querySelector('.var-qtd').value);
+        const imagemUrl = row.querySelector('.var-img').value;
+
+        if (index === 0) primeiraImagem = imagemUrl;
+
+        variacoes.push({ cor, tamanho, preco, quantidade, imagemUrl });
+    });
+
+    // 3. POST para criar Armação Base
+    const armacaoDto = {
+        marca: baseMarca,
+        modelo: baseModelo,
+        material: baseMaterial,
+        tipo: baseTipo,
+        descricao: baseDescricao,
+        cor: 'Variado',
+        tamanho: 'Variado',
+        preco: 0,
+        quantidade: 0,
+        imagemUrl: primeiraImagem
     };
 
-    const metodo = id ? 'PUT' : 'POST';
-    const urlFinal = id ? `${API_ITEM_PRODUTO}/${id}` : API_ITEM_PRODUTO;
-
     try {
-        const response = await fetch(urlFinal, {
-            method: metodo,
+        const resArmacao = await fetch(API_ARMACAO, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             },
-            body: JSON.stringify(itemProduto)
+            body: JSON.stringify(armacaoDto)
         });
 
-        if (response.ok) {
-            fecharModalItemProduto();
-            carregarItensProduto();
-        } else {
-            const erro = await response.text();
-            alert("Atenção: " + erro);
+        if (!resArmacao.ok) {
+            const erro = await resArmacao.text();
+            throw new Error("Erro ao criar armação base: " + erro);
         }
+
+        const armacaoCriada = await resArmacao.json();
+        const armacaoId = armacaoCriada.id;
+
+        // 4. POST para criar cada Variação (ItemProduto)
+        const promessasVariaveis = variacoes.map(v => {
+            const itemProdutoDto = {
+                armacaoId: armacaoId,
+                marca: baseMarca,
+                modelo: baseModelo,
+                material: baseMaterial,
+                tipo: baseTipo,
+                cor: v.cor,
+                tamanho: v.tamanho,
+                preco: v.preco,
+                quantidade: v.quantidade,
+                imagemUrl: v.imagemUrl
+            };
+
+            return fetch(API_ITEM_PRODUTO, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify(itemProdutoDto)
+            });
+        });
+
+        const respostasItens = await Promise.all(promessasVariaveis);
+        
+        let erroAoSalvarVariavel = false;
+        for (let res of respostasItens) {
+            if (!res.ok) {
+                console.error("Falha ao salvar uma variação", await res.text());
+                erroAoSalvarVariavel = true;
+            }
+        }
+        
+        if (erroAoSalvarVariavel) {
+            alert("Produto base criado, mas houve erro ao salvar algumas variações. Verifique o console.");
+        }
+
+        fecharModalNovoProduto();
+        carregarVariacoes();
+        
     } catch (error) {
-        console.error("Erro ao salvar item de produto:", error);
+        alert(error.message);
+        console.error("Erro ao salvar produto completo:", error);
     }
 }
 
-async function deletarItemProduto(id) {
+// =============================================
+//  MODAL DE EDIÇÃO DE ITEM DE PRODUTO
+// =============================================
+function abrirModalEditarItem(item) {
+    document.getElementById('editItemId').value = item.id;
+    document.getElementById('editItemArmacaoId').value = item.armacaoId || (item.armacao ? item.armacao.id : '');
+    
+    document.getElementById('editItemMarca').value = item.marca || '';
+    document.getElementById('editItemModelo').value = item.modelo || '';
+    
+    document.getElementById('editItemCor').value = item.cor || '';
+    document.getElementById('editItemTamanho').value = item.tamanho || '';
+    document.getElementById('editItemMaterial').value = item.material || '';
+    document.getElementById('editItemTipo').value = item.tipo || 'UNISSEX';
+    document.getElementById('editItemPreco').value = item.preco || '';
+    document.getElementById('editItemQuantidade').value = item.quantidade || 0;
+    document.getElementById('editItemImagemUrl').value = item.imagemUrl || '';
+
+    document.getElementById('modalEditarItem').style.display = 'flex';
+}
+
+function fecharModalEditarItem() {
+    document.getElementById('modalEditarItem').style.display = 'none';
+}
+
+async function salvarEdicaoItem(event) {
+    event.preventDefault();
     const user = getLoggedUser();
     if (!user || user.role !== 'ADMINISTRADOR') return;
 
-    if (confirm('Tem certeza que deseja excluir este item de produto?')) {
+    const id = document.getElementById('editItemId').value;
+
+    const itemProdutoAtualizado = {
+        armacaoId: parseInt(document.getElementById('editItemArmacaoId').value),
+        marca: document.getElementById('editItemMarca').value,
+        modelo: document.getElementById('editItemModelo').value,
+        cor: document.getElementById('editItemCor').value,
+        tamanho: document.getElementById('editItemTamanho').value,
+        material: document.getElementById('editItemMaterial').value,
+        tipo: document.getElementById('editItemTipo').value,
+        preco: parseFloat(document.getElementById('editItemPreco').value),
+        quantidade: parseInt(document.getElementById('editItemQuantidade').value),
+        imagemUrl: document.getElementById('editItemImagemUrl').value
+    };
+
+    try {
+        const response = await fetch(`${API_ITEM_PRODUTO}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+            body: JSON.stringify(itemProdutoAtualizado)
+        });
+
+        if (response.ok) {
+            fecharModalEditarItem();
+            carregarVariacoes();
+        } else {
+            const erro = await response.text();
+            alert("Erro ao editar variação: " + erro);
+        }
+    } catch (error) {
+        console.error("Erro ao salvar edição:", error);
+    }
+}
+
+// =============================================
+//  DELEÇÃO DE VARIAÇÃO
+// =============================================
+async function deletarVariacao(id) {
+    const user = getLoggedUser();
+    if (!user || user.role !== 'ADMINISTRADOR') return;
+
+    if (confirm('Tem certeza que deseja excluir esta variação de produto?')) {
         try {
             const response = await fetch(`${API_ITEM_PRODUTO}/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (response.ok) {
-                carregarItensProduto();
+                carregarVariacoes();
             } else {
                 const erro = await response.text();
                 alert("Erro ao excluir: " + erro);
@@ -276,33 +307,3 @@ async function deletarItemProduto(id) {
         }
     }
 }
-
-function abrirModalItemProduto() {
-    document.getElementById('formItemProduto').reset();
-    document.getElementById('itemProdutoId').value = '';
-    document.getElementById('modalTituloItem').innerText = 'Adicionar item de produto';
-    document.getElementById('btnSalvarItem').innerText = 'Salvar item';
-    document.getElementById('modalItemProduto').style.display = 'flex';
-}
-
-function fecharModalItemProduto() {
-    document.getElementById('modalItemProduto').style.display = 'none';
-}
-
-window.prepararEdicaoItemProduto = function(item) {
-    document.getElementById('itemProdutoId').value = item.id;
-    document.getElementById('inputItemArmacaoId').value = item.armacao ? item.armacao.id : '';
-    document.getElementById('inputItemMarca').value = item.marca || '';
-    document.getElementById('inputItemModelo').value = item.modelo || '';
-    document.getElementById('inputItemCor').value = item.cor || '';
-    document.getElementById('inputItemTamanho').value = item.tamanho || '';
-    document.getElementById('inputItemMaterial').value = item.material || '';
-    document.getElementById('inputItemTipo').value = item.tipo || 'UNISSEX';
-    document.getElementById('inputItemPreco').value = item.preco || '';
-    document.getElementById('inputItemQuantidade').value = item.quantidade || 0;
-    document.getElementById('inputItemImagemUrl').value = item.imagemUrl || '';
-
-    document.getElementById('modalTituloItem').innerText = 'Editar item de produto';
-    document.getElementById('btnSalvarItem').innerText = 'Salvar alteração';
-    document.getElementById('modalItemProduto').style.display = 'flex';
-};

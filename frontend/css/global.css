@@ -101,6 +101,8 @@ body.mode-admin .main-content {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .logo-icon {
@@ -109,11 +111,13 @@ body.mode-admin .main-content {
     border: 2.5px solid #10b981;
     border-radius: 8px;
     padding: 2px;
+    flex-shrink: 0;
 }
 
 .logo-text {
     font-size: 1.25rem;
     color: var(--azul-escuro);
+    white-space: nowrap;
 }
 
 .logo-text strong {
@@ -208,6 +212,8 @@ body.mode-admin .main-content {
     gap: 8px;
     font-weight: 600;
     font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .user-btn span {
@@ -232,6 +238,9 @@ body.mode-admin .main-content {
 .sidebar-header h2 {
     font-size: 1.15rem;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar-menu {
@@ -318,6 +327,8 @@ body.mode-admin .main-content {
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 25px;
+    line-height: 1.25;
+    word-break: normal;
 }
 
 /* --- UTILITÁRIOS GERAIS --- */

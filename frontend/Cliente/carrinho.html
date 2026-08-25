@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ótica Express - Meus Pedidos</title>
+    <title>Meu Carrinho - Ótica Express</title>
     <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/store.css">
+    <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/client.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -32,7 +34,7 @@
                 <button class="action-btn" title="Meus Pedidos" id="btnHeaderPedidos">
                     <span class="material-icons">assignment</span>
                 </button>
-                <button class="action-btn" title="Carrinho" onclick="window.location.href='carrinho.html'">
+                <button class="action-btn active" title="Carrinho" onclick="window.location.href='carrinho.html'">
                     <span class="material-icons">shopping_cart</span>
                     <span class="cart-badge" id="carrinhoQuantidade">0</span>
                 </button>
@@ -46,14 +48,14 @@
 
     <div class="layout-container">
         <main class="main-content">
-            <h1 class="view-title animate-fade">Meus Pedidos</h1>
-            <div class="orders-list" id="listaMeusPedidos">
-                <!-- Carregado via JS -->
+            <h1 class="view-title animate-fade">Meu Carrinho</h1>
+            <div id="carrinhoContainer">
+                <!-- Inserido dinamicamente via JS -->
             </div>
         </main>
     </div>
 
     <script src="../auth.js"></script>
-    <script src="pedidos.js"></script>
+    <script src="carrinho.js"></script>
 </body>
 </html>

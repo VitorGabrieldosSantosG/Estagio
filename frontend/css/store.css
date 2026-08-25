@@ -71,6 +71,9 @@
     color: var(--azul-escuro);
     margin-bottom: 12px;
     cursor: pointer;
+    line-height: 1.35;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .product-card-title:hover {
@@ -224,6 +227,9 @@
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 10px;
+    line-height: 1.25;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .detail-size {

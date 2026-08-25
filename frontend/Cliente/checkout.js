@@ -61,7 +61,7 @@ async function carregarDadosUsuario() {
     document.getElementById('summaryTamanhoArmacao').innerText = tamanhoPrimeiraArmacao;
 
     // Calcular valores
-    const subtotal = cart.reduce((acc, item) => acc + item.preco, 0);
+    const subtotal = cart.reduce((acc, item) => acc + (item.preco * (item.qtdCarrinho || 1)), 0);
     const frete = 15.00;
     const total = subtotal + frete;
 
@@ -85,7 +85,7 @@ async function finalizarCompra() {
     const user = getLoggedUser();
     if (!user) return;
 
-    const subtotal = cart.reduce((acc, item) => acc + item.preco, 0);
+    const subtotal = cart.reduce((acc, item) => acc + (item.preco * (item.qtdCarrinho || 1)), 0);
     const frete = 15.00;
     const total = subtotal + frete;
 
@@ -118,34 +118,37 @@ async function finalizarCompra() {
 
         const pedidoSalvo = await responsePedido.json();
 
-        // 2. Criar os Itens do Pedido vinculados
+        // 2. Criar os Itens do Pedido vinculados (1 registro por unidade)
         for (const item of cart) {
-            const itemPayload = {
-                pedidoId: pedidoSalvo.id,
-                produtoId: item.id,
-                marca: item.marca,
-                modelo: item.modelo,
-                tamanho: item.tamanho,
-                cor: item.cor,
-                ativo: true
-            };
+            const qtd = item.qtdCarrinho || 1;
+            for (let q = 0; q < qtd; q++) {
+                const itemPayload = {
+                    pedidoId: pedidoSalvo.id,
+                    produtoId: item.id,
+                    marca: item.marca,
+                    modelo: item.modelo,
+                    tamanho: item.tamanho,
+                    cor: item.cor,
+                    ativo: true
+                };
 
-            const itemResp = await fetch(API_ITEM_PEDIDO, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify(itemPayload)
-            });
+                const itemResp = await fetch(API_ITEM_PEDIDO, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify(itemPayload)
+                });
 
-            if (!itemResp.ok) {
-                const erroItem = await itemResp.text();
-                // Produto sem estoque (409) ou outro erro — avisar e parar
-                alert(`Erro ao processar item do carrinho: ${erroItem}\n\nSeu pedido foi registrado, mas alguns itens podem não ter sido processados. Por favor, entre em contato.`);
-                localStorage.removeItem('otica_cart');
-                window.location.href = 'sucesso.html';
-                return;
+                if (!itemResp.ok) {
+                    const erroItem = await itemResp.text();
+                    // Produto sem estoque (409) ou outro erro — avisar e parar
+                    alert(`Erro ao processar item do carrinho: ${erroItem}\n\nSeu pedido foi registrado, mas alguns itens podem não ter sido processados. Por favor, entre em contato.`);
+                    localStorage.removeItem('otica_cart');
+                    window.location.href = 'sucesso.html';
+                    return;
+                }
             }
         }
 

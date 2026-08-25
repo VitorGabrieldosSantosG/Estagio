@@ -326,3 +326,90 @@ td {
     color: var(--cinza-light);
     cursor: not-allowed;
 }
+
+/* --- NOVOS ESTILOS PARA MODAL UNIFICADO E VARIAÇÕES --- */
+.modal-box-large {
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--azul-escuro);
+    margin: 15px 0 10px;
+}
+
+.modal-divider {
+    border-top: 1.5px solid var(--borda);
+    margin: 20px 0;
+}
+
+.variacoes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.variacao-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-end;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 10px;
+    border: 1px solid var(--borda);
+}
+
+.variacao-row .form-group {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.variacao-row .form-group label {
+    font-size: 0.78rem;
+}
+
+.variacao-row .form-group input {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-remover-variacao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    color: #ef4444;
+    align-self: flex-end;
+}
+
+.btn-remover-variacao:hover {
+    color: #dc2626;
+}
+
+.btn-adicionar-variacao {
+    background: none;
+    border: 2px dashed var(--borda);
+    border-radius: 10px;
+    padding: 12px;
+    width: 100%;
+    cursor: pointer;
+    color: var(--azul-claro);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-adicionar-variacao:hover {
+    border-color: var(--azul-claro);
+    background: rgba(27, 61, 100, 0.03);
+}
+
+.form-group-row {
+    display: flex;
+    gap: 15px;
+}

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function carregarProdutos() {
     try {
-        const response = await fetch(API_ARMACAO);
+        const response = await fetch(API_ITEM_PRODUTO);
         const todos = await response.json();
         // Guardar apenas produtos com estoque disponível
         localProducts = todos.filter(p => p.quantidade != null && p.quantidade > 0);
@@ -25,7 +25,7 @@ function renderizarCatalogo(produtos) {
     grid.innerHTML = '';
 
     if (produtos.length === 0) {
-        grid.innerHTML = '<p class="no-products">Nenhuma armação disponível no momento.</p>';
+        grid.innerHTML = '<p class="no-products">Nenhum produto disponível no momento.</p>';
         return;
     }
 
@@ -72,7 +72,8 @@ function filtrarCatalogo() {
     const filtrados = localProducts.filter(prod => 
         prod.marca.toLowerCase().includes(query) || 
         prod.modelo.toLowerCase().includes(query) ||
-        prod.descricao.toLowerCase().includes(query)
+        (prod.cor || '').toLowerCase().includes(query) ||
+        (prod.material || '').toLowerCase().includes(query)
     );
     renderizarCatalogo(filtrados);
 }
@@ -86,9 +87,22 @@ function adicionarAoCarrinho(productId) {
     if (!prod) return;
 
     let cart = JSON.parse(localStorage.getItem('otica_cart') || '[]');
-    cart.push(prod);
+    const indexExistente = cart.findIndex(item => item.id === productId);
+
+    if (indexExistente !== -1) {
+        const qtdAtual = cart[indexExistente].qtdCarrinho || 1;
+        const estoqueMax = prod.quantidade != null ? prod.quantidade : 999;
+        if (qtdAtual >= estoqueMax) {
+            alert(`Limite de estoque atingido! Há apenas ${estoqueMax} unidade(s) disponível(is).`);
+            return;
+        }
+        cart[indexExistente].qtdCarrinho = qtdAtual + 1;
+    } else {
+        const itemParaAdicionar = { ...prod, qtdCarrinho: 1 };
+        cart.push(itemParaAdicionar);
+    }
+
     localStorage.setItem('otica_cart', JSON.stringify(cart));
-    
     updateHeader();
     alert(`Produto ${prod.marca} ${prod.modelo} adicionado ao carrinho!`);
 }

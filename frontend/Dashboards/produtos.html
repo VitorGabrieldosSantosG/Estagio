@@ -38,48 +38,11 @@
 
         <!-- CONTEÚDO MAIN -->
         <main class="main-content">
-            <!-- TABS DE NAVEGAÇÃO -->
-            <div class="tabs-container animate-fade" style="display:flex;gap:10px;margin-bottom:20px;">
-                <button id="tabArmacoes" class="btn-action-primary" onclick="trocarAba('armacoes')" style="padding:10px 20px;">Armações</button>
-                <button id="tabItensProduto" class="btn-cinza" onclick="trocarAba('itensProduto')" style="padding:10px 20px;">Itens de Produto (Estoque)</button>
-            </div>
-
-            <!-- ABA ARMAÇÕES -->
-            <div id="abaArmacoes" class="card-produtos animate-fade">
+            <div class="card-produtos animate-fade">
                 <div class="card-header">
-                    <h2>Armações</h2>
-                    <button id="btnAbrirModal" class="btn-verde" onclick="abrirModalProduto()">
-                        + Adicionar armação
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table id="tabelaProdutos">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                                <th>Cor</th>
-                                <th>Tamanho</th>
-                                <th>Preço</th>
-                                <th>Estoque</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpoTabela">
-                            <!-- Inserido via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ABA ITENS DE PRODUTO -->
-            <div id="abaItensProduto" class="card-produtos animate-fade" style="display:none;">
-                <div class="card-header">
-                    <h2>Itens de Produto (Estoque)</h2>
-                    <button class="btn-verde" onclick="abrirModalItemProduto()">
-                        + Adicionar item de produto
+                    <h2>Variações de Produtos</h2>
+                    <button class="btn-verde" onclick="abrirModalNovoProduto()">
+                        + Novo Produto
                     </button>
                 </div>
 
@@ -87,10 +50,8 @@
                     <table id="tabelaItensProduto">
                         <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>Armação (ID)</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
+                                <th>ID</th>
+                                <th>Armação</th>
                                 <th>Cor</th>
                                 <th>Tamanho</th>
                                 <th>Material</th>
@@ -109,130 +70,108 @@
         </main>
     </div>
 
-    <!-- MODAL DE ARMAÇÕES -->
-    <div id="modalProduto" class="modal-overlay">
-        <div class="modal-box">
+    <!-- MODAL NOVO PRODUTO UNIFICADO -->
+    <div id="modalNovoProduto" class="modal-overlay">
+        <div class="modal-box modal-box-large">
             <div class="modal-header">
                 <span class="material-icons">inventory_2</span>
-                <h2 id="modalTitulo">Adicionar armação</h2>
+                <h2>Novo Produto (Armação + Variações)</h2>
             </div>
-            <form id="formProduto" onsubmit="salvarProduto(event)">
-                <input type="hidden" id="produtoId">
-
+            <form id="formNovoProduto" onsubmit="salvarProdutoComVariacoes(event)">
+                
+                <h3 class="modal-section-title">Armação Base</h3>
                 <div class="form-group-row">
                     <div class="form-group">
                         <label>Marca:</label>
-                        <input type="text" id="inputMarca" placeholder="Ex: Ray-Ban" required>
+                        <input type="text" id="inputBaseMarca" placeholder="Ex: Ray-Ban" required>
                     </div>
                     <div class="form-group">
                         <label>Modelo:</label>
-                        <input type="text" id="inputModelo" placeholder="Ex: Aviador" required>
+                        <input type="text" id="inputBaseModelo" placeholder="Ex: Aviador" required>
                     </div>
                 </div>
-
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label>Cores:</label>
-                        <input type="text" id="inputCor" placeholder="Ex: Dourado" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Tamanhos:</label>
-                        <input type="text" id="inputTamanho" placeholder="Ex: M" required>
-                    </div>
-                </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
                         <label>Material:</label>
-                        <input type="text" id="inputMaterial" placeholder="Ex: Acetato, Metal" required>
+                        <input type="text" id="inputBaseMaterial" placeholder="Ex: Acetato" required>
                     </div>
                     <div class="form-group">
                         <label>Tipo:</label>
-                        <select id="inputTipo" required>
+                        <select id="inputBaseTipo" required>
                             <option value="MASCULINO">Masculino</option>
                             <option value="FEMININO">Feminino</option>
                             <option value="UNISSEX" selected>Unissex</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label>Preço (R$):</label>
-                        <input type="number" id="inputPreco" step="0.01" min="0.01" placeholder="0.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Estoque:</label>
-                        <input type="number" id="inputEstoque" min="0" placeholder="0" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>URL da Imagem:</label>
-                    <input type="url" id="inputImagemUrl" placeholder="https://site.com/imagem.jpg" required>
-                </div>
-
                 <div class="form-group">
                     <label>Descrição:</label>
-                    <textarea id="inputDescricao" rows="3" placeholder="Detalhes da armação..." required></textarea>
+                    <textarea id="inputBaseDescricao" rows="2" placeholder="Detalhes da armação..." required></textarea>
                 </div>
 
+                <div class="modal-divider"></div>
+
+                <h3 class="modal-section-title">Variações</h3>
+                <div id="variacoesContainer" class="variacoes-container">
+                    <!-- Linhas dinamicas via JS -->
+                </div>
+                
+                <button type="button" class="btn-adicionar-variacao" onclick="adicionarVariacao()" style="margin-top: 15px;">
+                    + Adicionar variação
+                </button>
+
                 <div class="modal-actions">
-                    <button type="button" class="btn-cinza" onclick="fecharModalProduto()">Cancelar</button>
-                    <button type="submit" id="btnSalvar" class="btn-verde">Salvar armação</button>
+                    <button type="button" class="btn-cinza" onclick="fecharModalNovoProduto()">Cancelar</button>
+                    <button type="submit" class="btn-verde">Salvar Produto</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL DE ITENS DE PRODUTO -->
-    <div id="modalItemProduto" class="modal-overlay">
+    <!-- MODAL EDITAR ITEM (VARIAÇÃO) -->
+    <div id="modalEditarItem" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
                 <span class="material-icons">category</span>
-                <h2 id="modalTituloItem">Adicionar item de produto</h2>
+                <h2>Editar Variação</h2>
             </div>
-            <form id="formItemProduto" onsubmit="salvarItemProduto(event)">
-                <input type="hidden" id="itemProdutoId">
-
-                <div class="form-group">
-                    <label>Armação (ID):</label>
-                    <input type="number" id="inputItemArmacaoId" placeholder="ID da armação vinculada" required>
-                </div>
+            <form id="formEditarItem" onsubmit="salvarEdicaoItem(event)">
+                <input type="hidden" id="editItemId">
+                <input type="hidden" id="editItemArmacaoId">
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label>Marca:</label>
-                        <input type="text" id="inputItemMarca" placeholder="Ex: Ray-Ban" required>
+                        <label>Marca (Herdada):</label>
+                        <input type="text" id="editItemMarca" readonly style="background-color: #f3f4f6;">
                     </div>
                     <div class="form-group">
-                        <label>Modelo:</label>
-                        <input type="text" id="inputItemModelo" placeholder="Ex: Aviador" required>
+                        <label>Modelo (Herdado):</label>
+                        <input type="text" id="editItemModelo" readonly style="background-color: #f3f4f6;">
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
                         <label>Cor:</label>
-                        <input type="text" id="inputItemCor" placeholder="Ex: Preto" required>
+                        <input type="text" id="editItemCor" required>
                     </div>
                     <div class="form-group">
                         <label>Tamanho:</label>
-                        <input type="text" id="inputItemTamanho" placeholder="Ex: M" required>
+                        <input type="text" id="editItemTamanho" required>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
                         <label>Material:</label>
-                        <input type="text" id="inputItemMaterial" placeholder="Ex: Acetato" required>
+                        <input type="text" id="editItemMaterial" required>
                     </div>
                     <div class="form-group">
                         <label>Tipo:</label>
-                        <select id="inputItemTipo">
+                        <select id="editItemTipo" required>
                             <option value="MASCULINO">Masculino</option>
                             <option value="FEMININO">Feminino</option>
-                            <option value="UNISSEX" selected>Unissex</option>
+                            <option value="UNISSEX">Unissex</option>
                         </select>
                     </div>
                 </div>
@@ -240,22 +179,22 @@
                 <div class="form-group-row">
                     <div class="form-group">
                         <label>Preço (R$):</label>
-                        <input type="number" id="inputItemPreco" step="0.01" min="0" placeholder="0.00" required>
+                        <input type="number" id="editItemPreco" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>Quantidade:</label>
-                        <input type="number" id="inputItemQuantidade" min="0" placeholder="0" required>
+                        <label>Quantidade (Estoque):</label>
+                        <input type="number" id="editItemQuantidade" min="0" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>URL da Imagem:</label>
-                    <input type="url" id="inputItemImagemUrl" placeholder="https://site.com/imagem.jpg" required>
+                    <input type="url" id="editItemImagemUrl" required>
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-cinza" onclick="fecharModalItemProduto()">Cancelar</button>
-                    <button type="submit" id="btnSalvarItem" class="btn-verde">Salvar item</button>
+                    <button type="button" class="btn-cinza" onclick="fecharModalEditarItem()">Cancelar</button>
+                    <button type="submit" class="btn-verde">Salvar Alterações</button>
                 </div>
             </form>
         </div>

@@ -63,7 +63,8 @@ function updateHeader() {
     // Carrinho
     const cart = JSON.parse(localStorage.getItem('otica_cart') || '[]');
     if (cartBadge) {
-        cartBadge.innerText = cart.length;
+        const totalQtd = cart.reduce((acc, item) => acc + (item.qtdCarrinho || 1), 0);
+        cartBadge.innerText = totalQtd;
     }
 
     if (userBtnText) {
