@@ -1,0 +1,931 @@
+/* ============================================================
+   ÓTICA EXPRESS — MEDIÇÃO CSS
+   Estilos para as telas de medição pupilar (seleção de método,
+   medição automática e medição com régua).
+   Usa variáveis do global.css.
+   ============================================================ */
+
+/* --- PÁGINA DE SELEÇÃO DE MÉTODO --- */
+.medicao-select-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.medicao-select-page .page-subtitle {
+    color: var(--cinza-light);
+    font-size: 1rem;
+    margin-bottom: 40px;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+.method-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 750px;
+}
+
+.method-card {
+    background: var(--branco);
+    border-radius: 16px;
+    padding: 40px 30px;
+    border: 2px solid var(--borda);
+    box-shadow: var(--sombra);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.method-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--verde-cadastro), var(--azul-claro));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.method-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    border-color: var(--verde-cadastro);
+}
+
+.method-card:hover::before {
+    opacity: 1;
+}
+
+.method-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.method-card:first-child .method-icon {
+    background: linear-gradient(135deg, rgba(0, 196, 151, 0.12), rgba(16, 185, 129, 0.08));
+    color: var(--verde-cadastro);
+}
+
+.method-card:last-child .method-icon {
+    background: linear-gradient(135deg, rgba(27, 61, 100, 0.12), rgba(17, 42, 70, 0.08));
+    color: var(--azul-claro);
+}
+
+.method-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.method-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+}
+
+.badge-rapida {
+    background: rgba(0, 196, 151, 0.12);
+    color: var(--verde-cadastro);
+    border: 1px solid rgba(0, 196, 151, 0.3);
+}
+
+.badge-precisao {
+    background: rgba(27, 61, 100, 0.1);
+    color: var(--azul-claro);
+    border: 1px solid rgba(27, 61, 100, 0.25);
+}
+
+.method-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    margin-bottom: 8px;
+}
+
+.method-card p {
+    font-size: 0.88rem;
+    color: var(--cinza-light);
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.method-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+    margin-top: auto;
+}
+
+.method-card:first-child .method-cta {
+    background: var(--verde-cadastro);
+    color: var(--branco);
+}
+
+.method-card:first-child:hover .method-cta {
+    background: var(--verde-hover);
+}
+
+.method-card:last-child .method-cta {
+    background: var(--azul-claro);
+    color: var(--branco);
+}
+
+.method-card:last-child:hover .method-cta {
+    background: var(--azul-escuro);
+}
+
+
+/* --- TELA DE MEDIÇÃO (COMUM A AMBOS) --- */
+.medicao-fullscreen {
+    min-height: 100vh;
+    background: var(--fundo-loja);
+    color: var(--cinza-texto);
+    display: flex;
+    flex-direction: column;
+}
+
+.medicao-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--branco);
+    border-bottom: 1px solid var(--borda);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    z-index: 50;
+}
+
+.medicao-top-bar .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--azul-claro);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.medicao-top-bar .back-btn:hover {
+    color: var(--azul-escuro);
+    background: #f3f4f6;
+}
+
+.medicao-top-bar .method-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cinza-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.medicao-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* --- VIEWPORT DA CÂMERA --- */
+.cam-viewport {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--borda);
+    box-shadow: var(--sombra-card);
+}
+
+.cam-viewport video,
+.cam-viewport canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+}
+
+.cam-viewport video {
+    transform: scaleX(-1);
+}
+
+.cam-viewport canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Overlay Canvas para método Auto (espelhado) */
+.cam-viewport .canvas-mirrored {
+    transform: scaleX(-1);
+}
+
+/* --- HINT BOX (Dicas Visuais) --- */
+.med-hint-box {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(6, 10, 18, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    max-width: 90%;
+    transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.med-hint-box[data-level="success"]   { border-color: rgba(34, 197, 94, 0.4);  background: rgba(8, 28, 16, 0.9); }
+.med-hint-box[data-level="warning"]   { border-color: rgba(245, 158, 11, 0.4); background: rgba(28, 20, 8, 0.9); }
+.med-hint-box[data-level="danger"]    { border-color: rgba(239, 68, 68, 0.4);  background: rgba(28, 8, 8, 0.9); }
+.med-hint-box[data-level="primary"]   { border-color: rgba(59, 130, 246, 0.35); background: rgba(8, 16, 32, 0.9); }
+.med-hint-box[data-level="capturing"] { border-color: rgba(0, 229, 255, 0.6);  background: rgba(4, 24, 32, 0.92); box-shadow: 0 0 20px rgba(0, 229, 255, 0.25); }
+
+.med-hint-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.med-hint-icon svg { width: 100%; height: 100%; }
+.med-hint-box[data-level="success"]   .med-hint-icon svg { color: #4ade80; }
+.med-hint-box[data-level="warning"]   .med-hint-icon svg { color: #fbbf24; }
+.med-hint-box[data-level="danger"]    .med-hint-icon svg { color: #f87171; }
+.med-hint-box[data-level="primary"]   .med-hint-icon svg { color: #60a5fa; }
+.med-hint-box[data-level="capturing"] .med-hint-icon svg { color: #22d3ee; animation: med-capturing-pulse 0.9s ease-in-out infinite; }
+
+.med-hint-content { display: flex; flex-direction: column; gap: 2px; }
+
+.med-hint-text {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.med-hint-box[data-level="success"]   .med-hint-text { color: #86efac; }
+.med-hint-box[data-level="warning"]   .med-hint-text { color: #fcd34d; }
+.med-hint-box[data-level="danger"]    .med-hint-text { color: #fca5a5; }
+.med-hint-box[data-level="primary"]   .med-hint-text { color: #bfdbfe; }
+.med-hint-box[data-level="capturing"] .med-hint-text { color: #67e8f9; }
+
+.med-hint-sub {
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: rgba(200, 210, 230, 0.65);
+    line-height: 1.2;
+}
+
+.med-hint-exit  { opacity: 0; transform: translateX(-50%) translateY(-4px); transition: opacity 0.15s ease, transform 0.15s ease; }
+.med-hint-enter { animation: medHintIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+@keyframes medHintIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.96); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0)   scale(1); }
+}
+
+@keyframes med-capturing-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(0.88); }
+}
+
+/* --- BARRA DE PROGRESSO --- */
+.med-progress-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 15;
+}
+
+.med-progress-track .med-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00e5ff, #22c55e);
+    border-radius: 0 2px 2px 0;
+    transition: width 0.15s ease;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+/* --- DICA INICIAL (abaixo do viewport) --- */
+.med-tip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: var(--sombra);
+}
+
+.med-tip .material-icons {
+    font-size: 1.4rem;
+    color: var(--laranja-carrinho);
+}
+
+.med-tip span {
+    font-size: 0.82rem;
+    color: var(--cinza-escuro);
+    line-height: 1.5;
+}
+
+/* --- BOTÕES DE AÇÃO --- */
+.med-actions {
+    display: flex;
+    gap: 12px;
+    max-width: 640px;
+    width: 100%;
+}
+
+.med-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.med-btn-primary {
+    background: var(--verde-cadastro);
+    color: var(--branco);
+    box-shadow: 0 4px 12px rgba(0, 196, 151, 0.2);
+}
+
+.med-btn-primary:hover {
+    background: var(--verde-hover);
+    box-shadow: 0 6px 16px rgba(0, 196, 151, 0.3);
+    transform: translateY(-1px);
+}
+
+.med-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.med-btn-secondary {
+    background: var(--branco);
+    color: var(--cinza-escuro);
+    border: 1px solid var(--borda);
+}
+
+.med-btn-secondary:hover {
+    background: #f3f4f6;
+    color: var(--azul-escuro);
+}
+
+
+/* --- MODAL DE CONFIRMAÇÃO --- */
+.med-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.med-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.med-modal {
+    background: var(--branco);
+    border-radius: 20px;
+    padding: 36px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: center;
+}
+
+.med-modal-overlay.active .med-modal {
+    transform: translateY(0) scale(1);
+}
+
+.med-modal-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0, 196, 151, 0.15), rgba(16, 185, 129, 0.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.med-modal-icon .material-icons {
+    font-size: 2rem;
+    color: var(--verde-cadastro);
+}
+
+.med-modal h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    margin-bottom: 6px;
+}
+
+.med-modal .modal-sub {
+    font-size: 0.88rem;
+    color: var(--cinza-light);
+    margin-bottom: 24px;
+}
+
+.med-modal-results {
+    background: #f9fafb;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.med-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.med-result-row:not(:last-child) {
+    border-bottom: 1px solid var(--borda);
+}
+
+.med-result-row .result-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--cinza-escuro);
+}
+
+.med-result-row .result-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+}
+
+.med-result-row .result-value.highlight {
+    font-size: 1.2rem;
+    color: var(--verde-cadastro);
+}
+
+.med-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.med-modal-actions button {
+    flex: 1;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    border: none;
+}
+
+.modal-btn-confirm {
+    background: var(--verde-cadastro);
+    color: var(--branco);
+}
+
+.modal-btn-confirm:hover {
+    background: var(--verde-hover);
+}
+
+.modal-btn-cancel {
+    background: #f3f4f6;
+    color: var(--cinza-escuro);
+    border: 1px solid var(--borda) !important;
+}
+
+.modal-btn-cancel:hover {
+    background: #e5e7eb;
+}
+
+
+/* --- CALIBRAÇÃO (RÉGUA) --- */
+.cam-viewport .guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    z-index: 10;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.cam-viewport .guide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 2px;
+}
+
+.cam-viewport .guide-left::before  { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.cam-viewport .guide-right::before { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+.cam-viewport .guide-label {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+}
+
+.cam-viewport .guide-left .guide-label  { background: rgba(34, 197, 94, 0.9); color: #fff; }
+.cam-viewport .guide-right .guide-label { background: rgba(239, 68, 68, 0.9); color: #fff; }
+
+.cam-viewport.calibrated .guide { opacity: 0.15; pointer-events: none; }
+
+.calib-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 15;
+    background: linear-gradient(transparent, rgba(6, 10, 18, 0.95) 30%);
+    padding: 16px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cam-viewport.calibrated .calib-controls { opacity: 0.15; pointer-events: none; }
+
+.calib-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.calib-slider-row label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    min-width: 45px;
+}
+
+.calib-slider-row label.label-green { color: #86efac; }
+.calib-slider-row label.label-red   { color: #fca5a5; }
+
+.calib-slider-row input[type="range"] {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+}
+
+.calib-slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.calib-slider-green::-webkit-slider-thumb { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.calib-slider-red::-webkit-slider-thumb   { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+.calib-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.calib-info {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-variant-numeric: tabular-nums;
+}
+
+.calib-confirm-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--laranja-carrinho);
+    color: var(--branco);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.calib-confirm-btn:hover {
+    background: var(--laranja-hover);
+}
+
+.instr-float {
+    position: absolute;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+    pointer-events: none;
+    background: rgba(17, 42, 70, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(245, 166, 35, 0.4);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fcd34d;
+    text-align: center;
+    max-width: 90%;
+    line-height: 1.4;
+}
+
+.cam-viewport.calibrated .instr-float { display: none; }
+
+/* DP badge flutuante acima do viewport (quando calibrado, régua) */
+.med-dp-live {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: var(--branco);
+    border: 2px solid var(--verde-cadastro);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+}
+
+.med-dp-live.active {
+    display: flex;
+}
+
+.med-dp-live .dp-label {
+    font-size: 0.78rem;
+    color: var(--cinza-light);
+    font-weight: 600;
+}
+
+.med-dp-live .dp-val {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--verde-cadastro);
+}
+
+.med-dp-live .dp-unit {
+    font-size: 0.82rem;
+    color: var(--cinza-light);
+    font-weight: 600;
+}
+
+/* --- SEÇÃO MEDIÇÃO NO CHECKOUT --- */
+.checkout-medicao-section {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.checkout-medicao-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    margin-bottom: 12px;
+}
+
+.checkout-medicao-section h3 .material-icons {
+    color: var(--verde-cadastro);
+    font-size: 1.3rem;
+}
+
+.checkout-medicao-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.checkout-medicao-item {
+    background: var(--branco);
+    border: 1px solid #d1fae5;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+
+.checkout-medicao-item .cm-label {
+    font-size: 0.75rem;
+    color: var(--cinza-light);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.checkout-medicao-item .cm-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+}
+
+.checkout-medicao-method {
+    font-size: 0.78rem;
+    color: var(--cinza-light);
+    margin-top: 10px;
+    text-align: right;
+}
+
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .method-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .method-card {
+        padding: 30px 24px;
+    }
+
+    .med-modal {
+        padding: 28px 20px;
+    }
+
+    .med-modal-results {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .medicao-select-page {
+        padding: 24px 16px;
+    }
+
+    .med-hint-box {
+        top: 8px;
+        padding: 8px 12px;
+        gap: 8px;
+        max-width: 95%;
+    }
+
+    .med-hint-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .med-hint-text {
+        font-size: 0.74rem;
+    }
+
+    .med-hint-sub {
+        font-size: 0.62rem;
+    }
+
+    .medicao-top-bar {
+        padding: 10px 14px;
+    }
+
+    .medicao-body {
+        padding: 12px;
+        gap: 14px;
+    }
+
+    .med-btn {
+        padding: 12px 16px;
+        font-size: 0.88rem;
+    }
+
+    .med-tip {
+        padding: 10px 14px;
+    }
+
+    .med-tip .material-icons {
+        font-size: 1.2rem;
+    }
+
+    .med-tip span {
+        font-size: 0.76rem;
+    }
+
+    .calib-controls {
+        padding: 10px 10px 8px;
+        gap: 6px;
+    }
+
+    .calib-slider-row {
+        gap: 6px;
+    }
+
+    .calib-slider-row label {
+        font-size: 0.66rem;
+        min-width: 36px;
+    }
+
+    .calib-slider-row input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    .calib-confirm-btn {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+    }
+
+    .instr-float {
+        bottom: 95px;
+        font-size: 0.68rem;
+        padding: 6px 12px;
+    }
+
+    .med-modal-actions {
+        flex-direction: column;
+    }
+
+    .method-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .method-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+}

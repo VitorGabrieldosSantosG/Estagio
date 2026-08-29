@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/client.css">
+    <link rel="stylesheet" href="../css/medicao.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -107,11 +108,8 @@
                 <div class="checkout-summary">
                     <div class="checkout-card">
                         <h2>Resumo do pedido</h2>
-                        <div class="summary-gray-box">
-                            <strong>Medidas faciais realizadas:</strong>
-                            <p>Distância pupilar (DP): 62mm</p>
-                            <p>Altura de montagem: 24mm</p>
-                        </div>
+                        <!-- Seção de Medição Pupilar (dinâmica) -->
+                        <div id="medicaoSection"></div>
 
                         <div class="summary-details">
                             <p>Lentes: <span id="summaryLentes">xx Esquerdo, xx Direito</span></p>

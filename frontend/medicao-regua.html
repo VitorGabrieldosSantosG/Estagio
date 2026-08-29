@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Medição com Régua — Ótica Express</title>
+    <meta name="description" content="Medição de distância pupilar com calibração por régua física para maior precisão.">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/medicao.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="medicao-fullscreen">
+        <!-- Top Bar -->
+        <div class="medicao-top-bar">
+            <button class="back-btn" onclick="window.location.href='medicao.html'">
+                <span class="material-icons">arrow_back</span>
+                Voltar
+            </button>
+            <span class="method-label">Medição com Régua</span>
+            <div style="width: 80px;"></div>
+        </div>
+
+        <!-- Body -->
+        <div class="medicao-body">
+            <!-- DP Live Badge (appears after calibration) -->
+            <div class="med-dp-live" id="dpLiveBadge">
+                <span class="dp-label">DP:</span>
+                <span class="dp-val" id="dpLiveVal">--</span>
+                <span class="dp-unit">mm</span>
+            </div>
+
+            <!-- Camera Viewport -->
+            <div class="cam-viewport" id="camViewport">
+                <video id="webcam" autoplay playsinline muted style="transform: scaleX(-1);"></video>
+                <canvas id="overlay_canvas"></canvas>
+
+                <!-- Hint Box -->
+                <div id="hint_box" class="med-hint-box" data-level="primary">
+                    <div id="hint_icon" class="med-hint-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                    </div>
+                    <div class="med-hint-content">
+                        <div id="hint_text" class="med-hint-text">Inicializando câmera...</div>
+                        <div id="hint_sub" class="med-hint-sub">Aguarde o carregamento</div>
+                    </div>
+                </div>
+
+                <!-- Floating Instruction -->
+                <div class="instr-float" id="instrFloat">
+                    📏 Posicione a régua na testa. Ajuste os sliders sobre 0 cm e 10 cm.
+                </div>
+
+                <!-- Guide Lines -->
+                <div id="guide_left" class="guide guide-left" style="left:30%;">
+                    <div class="guide-label">0 cm</div>
+                </div>
+                <div id="guide_right" class="guide guide-right" style="left:70%;">
+                    <div class="guide-label">10 cm</div>
+                </div>
+
+                <!-- Calibration Sliders -->
+                <div class="calib-controls" id="calibControls">
+                    <div class="calib-slider-row">
+                        <label class="label-green">0 cm</label>
+                        <input type="range" id="slider_left" class="calib-slider-green" min="2" max="98" value="30" step="0.1">
+                    </div>
+                    <div class="calib-slider-row">
+                        <label class="label-red">10 cm</label>
+                        <input type="range" id="slider_right" class="calib-slider-red" min="2" max="98" value="70" step="0.1">
+                    </div>
+                    <div class="calib-bottom-row">
+                        <span class="calib-info" id="calib_info">Distância: -- px</span>
+                        <button class="calib-confirm-btn" id="calib_btn">✓ Confirmar Calibração</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tip -->
+            <div class="med-tip" id="tipBox">
+                <span class="material-icons">tips_and_updates</span>
+                <span>Posicione a régua plana na testa, ajuste os sliders verde e vermelho sobre as marcas de 0 cm e 10 cm, e clique em confirmar.</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="med-actions">
+                <button id="finalize_btn" class="med-btn med-btn-primary" disabled style="display:none;">
+                    <span class="material-icons">check_circle</span>
+                    Finalizar Medição
+                </button>
+                <button id="recalib_btn" class="med-btn med-btn-secondary" style="display:none;">
+                    <span class="material-icons">refresh</span>
+                    Recalibrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="med-modal-overlay" id="modalOverlay">
+        <div class="med-modal">
+            <div class="med-modal-icon">
+                <span class="material-icons">check_circle</span>
+            </div>
+            <h2>Medição Concluída!</h2>
+            <p class="modal-sub">Confira os resultados abaixo:</p>
+
+            <div class="med-modal-results">
+                <div class="med-result-row">
+                    <span class="result-label">DP Binocular</span>
+                    <span class="result-value highlight" id="modal_dp_bino">-- mm</span>
+                </div>
+                <div class="med-result-row">
+                    <span class="result-label">DP Olho Esquerdo</span>
+                    <span class="result-value" id="modal_dp_esq">-- mm</span>
+                </div>
+                <div class="med-result-row">
+                    <span class="result-label">DP Olho Direito</span>
+                    <span class="result-value" id="modal_dp_dir">-- mm</span>
+                </div>
+            </div>
+
+            <div class="med-modal-actions">
+                <button class="modal-btn-confirm" id="modalConfirm">
+                    <span class="material-icons" style="font-size:1.1rem;vertical-align:middle;margin-right:4px;">check</span>
+                    Confirmar Medição
+                </button>
+                <button class="modal-btn-cancel" id="modalCancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="medicao-regua.js"></script>
+</body>
+</html>

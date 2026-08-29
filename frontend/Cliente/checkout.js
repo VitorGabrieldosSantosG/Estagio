@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!checkAuth()) return;
     
     updateHeader();
+    renderMedicaoSection();
 
     // Carregar carrinho
     cart = JSON.parse(localStorage.getItem('otica_cart') || '[]');
@@ -17,6 +18,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     carregarDadosUsuario();
 });
+
+function renderMedicaoSection() {
+    const container = document.getElementById('medicaoSection');
+    if (!container) return;
+
+    const raw = localStorage.getItem('otica_medicao');
+    if (!raw) {
+        container.innerHTML = `
+            <div class="summary-gray-box" style="text-align:center;">
+                <span class="material-icons" style="font-size:2rem;color:var(--cinza-light);margin-bottom:8px;">visibility</span>
+                <p style="color:var(--cinza-escuro);font-size:0.9rem;margin-bottom:10px;">Nenhuma medição pupilar realizada.</p>
+                <a href="../medicao.html" style="color:var(--verde-cadastro);font-weight:600;text-decoration:none;font-size:0.88rem;">
+                    Realizar Medição →
+                </a>
+            </div>`;
+        return;
+    }
+
+    try {
+        const med = JSON.parse(raw);
+        container.innerHTML = `
+            <div class="checkout-medicao-section">
+                <h3>
+                    <span class="material-icons">straighten</span>
+                    Medição Pupilar
+                </h3>
+                <div class="checkout-medicao-grid">
+                    <div class="checkout-medicao-item">
+                        <div class="cm-label">DP Binocular</div>
+                        <div class="cm-value">${med.dp_binocular} mm</div>
+                    </div>
+                    <div class="checkout-medicao-item">
+                        <div class="cm-label">DP Esquerdo</div>
+                        <div class="cm-value">${med.dp_esq} mm</div>
+                    </div>
+                    <div class="checkout-medicao-item">
+                        <div class="cm-label">DP Direito</div>
+                        <div class="cm-value">${med.dp_dir} mm</div>
+                    </div>
+                </div>
+                <p class="checkout-medicao-method">Método: ${med.metodo}</p>
+            </div>`;
+    } catch (e) {
+        console.error("Erro ao ler dados de medição:", e);
+        container.innerHTML = '';
+    }
+}
 
 async function carregarDadosUsuario() {
     const user = getLoggedUser();
