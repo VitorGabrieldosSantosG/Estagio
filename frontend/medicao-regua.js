@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // MEDIÇÃO COM RÉGUA (Calibração Manual) — Ótica Express
-// Adaptado do método 3 do medicao.md, simplificado para o cliente.
+// Baseado no modelo clínico óptico do medicao.md
+// Orientação direta (sem efeito de selfie invertida), alta performance e carregamento paralelo.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import {
@@ -46,7 +47,6 @@ const elSliderL    = document.getElementById("slider_left");
 const elSliderR    = document.getElementById("slider_right");
 const elCalibBtn   = document.getElementById("calib_btn");
 const elCalibInfo  = document.getElementById("calib_info");
-const elInstrFloat = document.getElementById("instrFloat");
 
 const elFinalizeBtn = document.getElementById("finalize_btn");
 const elRecalibBtn  = document.getElementById("recalib_btn");
@@ -72,23 +72,29 @@ let lastVt          = -1;
 let ppmCalibrated   = null;
 let isCalibrated    = false;
 let samples         = [];
-const SAMPLE_MAX    = 120;
-const SAMPLE_WINDOW = 30;
+const SAMPLE_MAX    = 60;
+const SAMPLE_WINDOW = 20;
 
 // ─────────────────────────────────────────────────────────────────────────
-// SISTEMA DE DICAS VISUAIS
+// SISTEMA DE DICAS VISUAIS (Responsivo)
 // ─────────────────────────────────────────────────────────────────────────
 const HINTS = {
-  init: {
+  loading_camera: {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`,
-    text: "Inicializando câmera...",
-    sub: "Aguarde o carregamento",
+    text: "Acessando câmera...",
+    sub: "Permita o acesso à câmera se solicitado",
+    level: "primary"
+  },
+  loading_model: {
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,
+    text: "Carregando modelo biométrico...",
+    sub: "Preparando visão computacional",
     level: "primary"
   },
   no_face: {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="18" y1="2" x2="22" y2="6"/><line x1="22" y1="2" x2="18" y2="6"/></svg>`,
     text: "Nenhum rosto detectado",
-    sub: "Posicione seu rosto em frente à câmera",
+    sub: "Posicione seu rosto de frente para a câmera",
     level: "danger"
   },
   calibrate: {
@@ -111,89 +117,120 @@ const HINTS = {
   },
 };
 
-let currentHintKey    = "init";
-let hintDebounceTimer = null;
+let currentHintKey = "";
 
 function updateHint(key) {
   if (key === currentHintKey) return;
-  clearTimeout(hintDebounceTimer);
-  hintDebounceTimer = setTimeout(() => {
-    currentHintKey = key;
-    const h = HINTS[key];
-    if (!h) return;
+  currentHintKey = key;
+  const h = HINTS[key];
+  if (!h) return;
 
-    elHintBox.classList.add("med-hint-exit");
-    setTimeout(() => {
-      elHintBox.dataset.level = h.level;
-      elHintIcon.innerHTML    = h.icon;
-      elHintText.textContent  = h.text;
-      elHintSub.textContent   = h.sub;
-      elHintBox.classList.remove("med-hint-exit");
-      elHintBox.classList.add("med-hint-enter");
-      setTimeout(() => elHintBox.classList.remove("med-hint-enter"), 300);
-    }, 150);
-  }, 80);
+  elHintBox.dataset.level = h.level;
+  elHintIcon.innerHTML    = h.icon;
+  elHintText.textContent  = h.text;
+  elHintSub.textContent   = h.sub;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// UTILITÁRIOS
+// UTILITÁRIOS MATEMÁTICOS
 // ─────────────────────────────────────────────────────────────────────────
 const dist2D = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
 
-function calcEAR(t1, t2, b1, b2, inner, outer) {
-  const v = (dist2D(t1, b1) + dist2D(t2, b2)) / 2;
-  const h = dist2D(inner, outer);
-  return h > 0 ? v / h : 0;
-}
-
-function rollAngle(pL, pR) {
-  return Math.atan2(pR.y - pL.y, pR.x - pL.x) * (180 / Math.PI);
-}
-
 // ─────────────────────────────────────────────────────────────────────────
-// INICIALIZAÇÃO
+// CARREGAMENTO RÁPIDO & RESILIENTE DO MEDIAPIPE (GPU com Fallback CPU)
 // ─────────────────────────────────────────────────────────────────────────
-async function init() {
+async function loadFaceLandmarker() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+  );
+
+  const modelAssetPath =
+    "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+
   try {
-    const vision = await FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-    );
-    faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-      baseOptions: {
-        modelAssetPath:
-          "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-        delegate: "GPU",
-      },
+    const gpuInitPromise = FaceLandmarker.createFromOptions(vision, {
+      baseOptions: { modelAssetPath, delegate: "GPU" },
       runningMode: "VIDEO",
       numFaces: 1,
+      minFaceDetectionConfidence: 0.5,
+      minFacePresenceConfidence:  0.5,
+      minTrackingConfidence:      0.5,
       outputFaceBlendshapes: false,
       outputFacialTransformationMatrixes: false,
     });
 
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: { ideal: "user" },
-        width:  { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { min: 30, ideal: 60 },
-      },
-    });
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout GPU")), 4000)
+    );
 
-    videoEl.srcObject = mediaStream;
-    await new Promise(r => videoEl.addEventListener("loadeddata", r, { once: true }));
+    return await Promise.race([gpuInitPromise, timeoutPromise]);
+  } catch (gpuErr) {
+    console.warn("GPU delegate indisponível ou lento. Inicializando com CPU (WASM-SIMD)...", gpuErr);
+    return await FaceLandmarker.createFromOptions(vision, {
+      baseOptions: { modelAssetPath, delegate: "CPU" },
+      runningMode: "VIDEO",
+      numFaces: 1,
+      minFaceDetectionConfidence: 0.5,
+      minFacePresenceConfidence:  0.5,
+      minTrackingConfidence:      0.5,
+      outputFaceBlendshapes: false,
+      outputFacialTransformationMatrixes: false,
+    });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// ACESSO À CÂMERA (Orientação Direta)
+// ─────────────────────────────────────────────────────────────────────────
+async function initCamera() {
+  mediaStream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      facingMode: "user",
+      width:  { ideal: 1280, min: 640 },
+      height: { ideal: 720,  min: 480 },
+      frameRate: { min: 30, ideal: 60 },
+    },
+  });
+
+  videoEl.srcObject = mediaStream;
+  await new Promise((resolve) => {
+    videoEl.onloadedmetadata = () => {
+      videoEl.play();
+      resolve();
+    };
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// INICIALIZAÇÃO PARALELA
+// ─────────────────────────────────────────────────────────────────────────
+async function initApp() {
+  updateHint("loading_camera");
+
+  const cameraPromise = initCamera().then(() => {
+    if (!faceLandmarker) updateHint("loading_model");
+  });
+
+  const modelPromise = loadFaceLandmarker().then((landmarker) => {
+    faceLandmarker = landmarker;
+  });
+
+  try {
+    await Promise.all([cameraPromise, modelPromise]);
 
     updateHint("calibrate");
     initSliders();
     renderLoop();
-
   } catch (err) {
+    console.error("Erro na inicialização:", err);
     let msg = "Erro ao acessar a câmera.";
     if (err.name === "NotAllowedError") msg = "Permissão de câmera negada.";
     else if (err.name === "NotFoundError") msg = "Nenhuma câmera encontrada.";
+
     updateHint("no_face");
     elHintText.textContent = msg;
-    elHintSub.textContent  = "Verifique as permissões do navegador";
+    elHintSub.textContent  = "Verifique as permissões ou recarregue a página";
   }
 }
 
@@ -233,11 +270,11 @@ function confirmCalibration() {
   const rPct = parseFloat(elSliderR.value);
 
   const vw = videoEl.videoWidth  || 1280;
+  const vh = videoEl.videoHeight || 720;
   const containerW = elViewport.offsetWidth;
   const containerH = elViewport.offsetHeight;
 
   const scaleX = containerW / vw;
-  const vh = videoEl.videoHeight || 720;
   const scaleY = containerH / vh;
   const scale  = Math.max(scaleX, scaleY);
   const renderedW = vw * scale;
@@ -260,13 +297,11 @@ function confirmCalibration() {
   elViewport.classList.add("calibrated");
   updateHint("calibrated");
 
-  // Mostrar botões pós-calibração
   elFinalizeBtn.style.display = "flex";
   elFinalizeBtn.disabled = false;
   elRecalibBtn.style.display  = "flex";
   elDPLiveBadge.classList.add("active");
 
-  // Atualizar dica
   elTipBox.querySelector("span:last-child").textContent =
     "Retire a régua. A DP está sendo medida em tempo real. Quando estabilizar, clique em \"Finalizar Medição\".";
 }
@@ -276,17 +311,23 @@ function confirmCalibration() {
 // ─────────────────────────────────────────────────────────────────────────
 function renderLoop() {
   animId = requestAnimationFrame(renderLoop);
-  if (!faceLandmarker || videoEl.readyState < 2) return;
+  if (!faceLandmarker || videoEl.readyState < 2 || videoEl.paused) return;
+
+  const nowMs = performance.now();
   if (videoEl.currentTime === lastVt) return;
   lastVt = videoEl.currentTime;
 
   const vw = videoEl.videoWidth  || 1280;
   const vh = videoEl.videoHeight || 720;
-  canvasEl.width  = vw;
-  canvasEl.height = vh;
+
+  if (canvasEl.width !== vw || canvasEl.height !== vh) {
+    canvasEl.width  = vw;
+    canvasEl.height = vh;
+  }
+
   ctx.clearRect(0, 0, vw, vh);
 
-  const res = faceLandmarker.detectForVideo(videoEl, performance.now());
+  const res = faceLandmarker.detectForVideo(videoEl, nowMs);
   if (!res.faceLandmarks?.length) {
     if (!isCalibrated) updateHint("calibrate");
     else updateHint("no_face");
@@ -300,73 +341,63 @@ function renderLoop() {
   const zL = px(LM_ZYGO_L),  zR = px(LM_ZYGO_R);
   const nD = px(LM_NOSE_DORSUM);
 
-  // Desenhar landmarks
-  drawLandmarks(pL, pR, zL, zR, nD, vw, vh);
+  // Desenhar landmarks em orientação direta
+  drawLandmarks(pL, pR, zL, zR, nD);
 
-  // Medição contínua após calibração
+  // Medição contínua pós-calibração
   if (isCalibrated && ppmCalibrated > 0) {
-    const dpPx     = dist2D(pL, pR);
-    const dpMm     = dpPx / ppmCalibrated;
-    const dpLPx    = Math.abs(pL.x - nD.x);
-    const dpRPx    = Math.abs(pR.x - nD.x);
-    const dpLeftMm = dpLPx / ppmCalibrated;
-    const dpRightMm= dpRPx / ppmCalibrated;
-    const faceWMm  = dist2D(zL, zR) / ppmCalibrated;
+    const dpPx      = dist2D(pL, pR);
+    const dpMm      = dpPx / ppmCalibrated;
+    const dpLeftMm  = Math.abs(pL.x - nD.x) / ppmCalibrated;
+    const dpRightMm = Math.abs(pR.x - nD.x) / ppmCalibrated;
+    const faceWMm   = dist2D(zL, zR) / ppmCalibrated;
 
     samples.push({ dpMm, dpLeftMm, dpRightMm, faceWMm });
     if (samples.length > SAMPLE_MAX) samples.shift();
 
     const win = samples.slice(-SAMPLE_WINDOW);
     const avg = (arr) => arr.reduce((s, v) => s + v, 0) / arr.length;
-    const avgDP  = avg(win.map(s => s.dpMm));
+    const avgDP = avg(win.map(s => s.dpMm));
 
     elDPLiveVal.textContent = avgDP.toFixed(1);
-
-    // Badge flutuante no canvas
-    ctx.font         = "600 15px Montserrat, sans-serif";
-    ctx.fillStyle    = "rgba(0,229,255,0.95)";
-    ctx.textAlign    = "center";
-    ctx.textBaseline = "bottom";
-    const midX = (pL.x + pR.x) / 2;
-    const midY = Math.min(pL.y, pR.y) - 12;
-    ctx.fillText(`DP: ${avgDP.toFixed(1)} mm`, midX, midY);
   }
 }
 
-function drawLandmarks(pL, pR, zL, zR, nD, vw, vh) {
+function drawLandmarks(pL, pR, zL, zR, nD) {
   // Linha DP
   ctx.beginPath();
   ctx.moveTo(pL.x, pL.y);
   ctx.lineTo(pR.x, pR.y);
-  ctx.strokeStyle = isCalibrated ? "rgba(34,197,94,0.9)" : "rgba(255,255,255,0.3)";
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 3]);
+  ctx.strokeStyle = isCalibrated ? "rgba(34, 197, 94, 0.9)" : "rgba(255, 255, 255, 0.35)";
+  ctx.lineWidth = 1.8;
+  ctx.setLineDash([5, 4]);
   ctx.stroke();
   ctx.setLineDash([]);
 
   // Pupilas
-  [pL, pR].forEach(p => {
+  [pL, pR].forEach((p) => {
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
     ctx.fillStyle = "#00e5ff";
     ctx.fill();
+
     ctx.beginPath();
     ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(0,229,255,0.3)";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(0, 229, 255, 0.4)";
+    ctx.lineWidth = 1.5;
     ctx.stroke();
   });
 
   // Dorso nasal
   ctx.beginPath();
-  ctx.arc(nD.x, nD.y, 3.5, 0, Math.PI * 2);
+  ctx.arc(nD.x, nD.y, 3, 0, Math.PI * 2);
   ctx.fillStyle = "#f59e0b";
   ctx.fill();
 
   // Zigomáticos
-  [zL, zR].forEach(p => {
+  [zL, zR].forEach((p) => {
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
     ctx.fillStyle = "#fb923c";
     ctx.fill();
   });
@@ -377,8 +408,8 @@ function drawLandmarks(pL, pR, zL, zR, nD, vw, vh) {
 // ─────────────────────────────────────────────────────────────────────────
 function finalizeMeasurement() {
   if (samples.length < SAMPLE_WINDOW) {
-    elHintText.textContent = "Aguarde mais amostras...";
-    elHintSub.textContent  = `Coletadas: ${samples.length}/${SAMPLE_WINDOW}`;
+    elHintText.textContent = "Aguarde mais um instante...";
+    elHintSub.textContent  = `Estabilizando leitura (${samples.length}/${SAMPLE_WINDOW})`;
     return;
   }
 
@@ -390,9 +421,8 @@ function finalizeMeasurement() {
 
   updateHint("done");
 
-  // Parar câmera
   if (mediaStream) {
-    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream.getTracks().forEach((t) => t.stop());
     mediaStream = null;
     videoEl.srcObject = null;
   }
@@ -401,7 +431,6 @@ function finalizeMeasurement() {
     animId = null;
   }
 
-  // Mostrar modal
   elModalDPBino.textContent = finalDP.toFixed(1) + " mm";
   elModalDPEsq.textContent  = finalLeft.toFixed(1) + " mm";
   elModalDPDir.textContent  = finalRight.toFixed(1) + " mm";
@@ -420,7 +449,6 @@ function finalizeMeasurement() {
 // EVENT LISTENERS
 // ─────────────────────────────────────────────────────────────────────────
 elCalibBtn.addEventListener("click", confirmCalibration);
-
 elFinalizeBtn.addEventListener("click", finalizeMeasurement);
 
 elRecalibBtn.addEventListener("click", () => {
@@ -453,8 +481,4 @@ elModalCancel.addEventListener("click", () => {
 // ─────────────────────────────────────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────────────────────────────────────
-init().catch(err => {
-  updateHint("no_face");
-  elHintText.textContent = `Erro: ${err.message}`;
-  elHintSub.textContent  = "Tente recarregar a página";
-});
+initApp();

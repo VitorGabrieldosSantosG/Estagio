@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Medição com Régua — Ótica Express</title>
     <meta name="description" content="Medição de distância pupilar com calibração por régua física para maior precisão.">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://storage.googleapis.com">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/medicao.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -33,7 +37,7 @@
 
             <!-- Camera Viewport -->
             <div class="cam-viewport" id="camViewport">
-                <video id="webcam" autoplay playsinline muted style="transform: scaleX(-1);"></video>
+                <video id="webcam" autoplay playsinline muted></video>
                 <canvas id="overlay_canvas"></canvas>
 
                 <!-- Hint Box -->
