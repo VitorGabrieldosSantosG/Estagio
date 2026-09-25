@@ -1,0 +1,3273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description"
+        content="Medição pupilar de alta precisão por foto — Ótica Express">
+    <title>Medição por Foto — Ótica Express</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/medicao.css">
+
+    <style>
+        /* ═══════════════════════════════════════════════════ */
+        /*  FOTO-SPECIFIC OVERRIDES (Light Theme)             */
+        /* ═══════════════════════════════════════════════════ */
+        :root {
+            --foto-accent: var(--verde-cadastro);
+            --foto-accent-hover: var(--verde-hover);
+            --foto-card-color: #3b82f6;
+            --foto-pupil-color: var(--verde-cadastro);
+            --foto-nose-color: #f59e0b;
+            --foto-radius-xl: 20px;
+            --foto-radius-lg: 16px;
+            --foto-radius-md: 12px;
+            --foto-radius-sm: 8px;
+            --foto-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #app {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 680px;
+            padding: 20px 16px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* ── START SCREEN ── */
+        .foto-hero {
+            text-align: center;
+            margin: 16px 0 20px;
+        }
+
+        .foto-hero h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            line-height: 1.2;
+        }
+
+        .foto-hero p {
+            font-size: 0.92rem;
+            color: var(--cinza-light);
+            margin-top: 6px;
+        }
+
+        .instructions-card {
+            width: 100%;
+            padding: 22px 20px;
+            margin-bottom: 20px;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: var(--foto-radius-lg);
+            box-shadow: var(--sombra);
+        }
+
+        .instructions-card h3 {
+            font-size: 1.02rem;
+            margin-bottom: 12px;
+            color: var(--azul-escuro);
+            font-weight: 700;
+        }
+
+        .steps-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.88rem;
+            color: var(--cinza-escuro);
+            line-height: 1.45;
+        }
+
+        .step-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--verde-cadastro), var(--azul-claro));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .capture-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .btn-foto-capture {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--verde-cadastro);
+            border: none;
+            border-radius: var(--foto-radius-md);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 196, 151, 0.25);
+        }
+
+        .btn-foto-capture:hover {
+            background: var(--verde-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 196, 151, 0.35);
+        }
+
+        .btn-foto-capture:active {
+            transform: translateY(0);
+        }
+
+        .btn-foto-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: var(--foto-radius-md);
+            color: var(--cinza-escuro);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--sombra);
+        }
+
+        .btn-foto-secondary:hover {
+            background: #f3f4f6;
+            border-color: var(--cinza-light);
+        }
+
+        /* ── EDITOR SCREEN ── */
+        #editorScreen {
+            padding: 10px 8px 100px;
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .step-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: var(--foto-radius-lg);
+            box-shadow: var(--sombra);
+        }
+
+        .step-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: 1px solid var(--borda);
+            color: var(--azul-escuro);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .step-nav-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .step-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .step-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .step-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.completed {
+            background: var(--verde-cadastro);
+            box-shadow: 0 0 6px rgba(0, 196, 151, 0.4);
+        }
+
+        .step-dot.current {
+            width: 10px;
+            height: 10px;
+            background: var(--azul-claro);
+            box-shadow: 0 0 10px rgba(27, 61, 100, 0.3);
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        .step-dot.review-active {
+            background: var(--verde-cadastro);
+            box-shadow: 0 0 8px rgba(0, 196, 151, 0.4);
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .step-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            text-align: center;
+        }
+
+        .step-hint {
+            font-size: 0.7rem;
+            color: var(--cinza-light);
+            text-align: center;
+        }
+
+        /* ── Zoom Preview Panel ── */
+        .zoom-panel {
+            width: 100%;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: var(--foto-radius-lg);
+            box-shadow: var(--sombra);
+        }
+
+        .zoom-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        .zoom-coords {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--cinza-light);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .zoom-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .zoom-slider-wrap label {
+            font-size: 0.72rem;
+            color: var(--cinza-light);
+        }
+
+        #zoomSlider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e5e7eb;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        #zoomSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--azul-claro);
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(27, 61, 100, 0.3);
+        }
+
+        .zoom-level-text {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--azul-claro);
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .zoom-viewport {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            background: #f9fafb;
+        }
+
+        .zoom-canvas-wrap {
+            position: relative;
+            border-radius: var(--foto-radius-sm);
+            overflow: hidden;
+            border: 2px solid var(--borda);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+        }
+
+        #zoomCanvas {
+            display: block;
+        }
+
+        .zoom-crosshair {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .zoom-crosshair::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                    rgba(239, 68, 68, 0.6),
+                    rgba(239, 68, 68, 0.15) 40%,
+                    transparent 47%,
+                    transparent 53%,
+                    rgba(239, 68, 68, 0.15) 60%,
+                    rgba(239, 68, 68, 0.6));
+            transform: translateX(-50%);
+        }
+
+        .zoom-crosshair::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(to right,
+                    rgba(239, 68, 68, 0.6),
+                    rgba(239, 68, 68, 0.15) 40%,
+                    transparent 47%,
+                    transparent 53%,
+                    rgba(239, 68, 68, 0.15) 60%,
+                    rgba(239, 68, 68, 0.6));
+            transform: translateY(-50%);
+        }
+
+        .zoom-center-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(239, 68, 68, 0.7);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        /* ── D-Pad Controls ── */
+        .dpad-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 4px 14px 8px;
+        }
+
+        .dpad-grid {
+            display: grid;
+            grid-template-columns: 36px 36px 36px;
+            grid-template-rows: 36px 36px 36px;
+            gap: 3px;
+        }
+
+        .dpad-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            border: 1px solid var(--borda);
+            color: var(--cinza-escuro);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .dpad-btn:hover {
+            background: #e5e7eb;
+            color: var(--azul-escuro);
+        }
+
+        .dpad-btn:active {
+            background: rgba(0, 196, 151, 0.15);
+            transform: scale(0.92);
+        }
+
+        .dpad-btn.center {
+            background: rgba(27, 61, 100, 0.08);
+            border-color: rgba(27, 61, 100, 0.2);
+            font-size: 0.5rem;
+            color: var(--azul-claro);
+        }
+
+        .dpad-label {
+            font-size: 0.68rem;
+            color: var(--cinza-light);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* ── Main Canvas ── */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            border-radius: var(--foto-radius-lg);
+            overflow: hidden;
+            background: #000;
+            box-shadow: var(--sombra-card);
+            touch-action: none;
+            border: 1px solid var(--borda);
+        }
+
+        #imageCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* ── Floating Magnifier (drag-time) ── */
+        .magnifier-loupe {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            overflow: hidden;
+            display: none;
+            z-index: 50;
+            background: #000;
+        }
+
+        .magnifier-loupe.active {
+            display: block;
+        }
+
+        .magnifier-loupe canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .magnifier-crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .magnifier-crosshair::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1.5px;
+            background: rgba(239, 68, 68, 0.85);
+            transform: translateX(-50%);
+        }
+
+        .magnifier-crosshair::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1.5px;
+            background: rgba(239, 68, 68, 0.85);
+            transform: translateY(-50%);
+        }
+
+        .magnifier-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(239, 68, 68, 0.7);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* ── Quality Banner ── */
+        .quality-banner {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+            padding: 6px 10px;
+            font-size: 0.7rem;
+            color: var(--cinza-light);
+        }
+
+        .quality-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .quality-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .quality-dot.good { background: var(--verde-cadastro); }
+        .quality-dot.warn { background: #f59e0b; }
+        .quality-dot.bad { background: #ef4444; }
+
+        /* ── Points Legend ── */
+        .points-legend {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+            padding: 6px 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--cinza-escuro);
+        }
+
+        .legend-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.card {
+            background: var(--foto-card-color);
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+        }
+
+        .legend-dot.pupil {
+            background: var(--foto-pupil-color);
+            box-shadow: 0 0 5px rgba(0, 196, 151, 0.4);
+        }
+
+        .legend-dot.nose {
+            background: var(--foto-nose-color);
+            box-shadow: 0 0 5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ── Editor Bottom Bar ── */
+        .editor-bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--borda);
+            z-index: 100;
+            max-width: 720px;
+            margin: 0 auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .live-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .live-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--cinza-light);
+            text-transform: uppercase;
+        }
+
+        .live-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--verde-cadastro);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .btn-confirm {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: var(--foto-radius-md);
+            background: var(--verde-cadastro);
+            border: none;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 196, 151, 0.25);
+        }
+
+        .btn-confirm:hover {
+            background: var(--verde-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-confirm.finish {
+            background: var(--azul-claro);
+            box-shadow: 0 4px 12px rgba(27, 61, 100, 0.25);
+        }
+
+        .btn-confirm.finish:hover {
+            background: var(--azul-escuro);
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  SMART GUIDED CAMERA                               */
+        /* ═══════════════════════════════════════════════════ */
+        #guidedCameraScreen {
+            padding: 10px 12px 24px;
+            width: 100%;
+            max-width: 600px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #guidedCameraScreen.active {
+            display: flex;
+        }
+
+        .guided-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
+        .guided-title-wrap {
+            text-align: center;
+        }
+
+        .guided-title-wrap h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            line-height: 1.2;
+        }
+
+        .guided-subtitle {
+            font-size: 0.72rem;
+            color: var(--verde-cadastro);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .guided-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon-glass {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: 1px solid var(--borda);
+            color: var(--azul-escuro);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon-glass:hover {
+            background: #e5e7eb;
+            transform: scale(1.05);
+        }
+
+        .btn-icon-glass.active {
+            background: rgba(0, 196, 151, 0.12);
+            border-color: var(--verde-cadastro);
+            box-shadow: 0 0 8px rgba(0, 196, 151, 0.2);
+        }
+
+        .btn-pill-glass {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #f3f4f6;
+            border: 1px solid var(--borda);
+            color: var(--azul-escuro);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-pill-glass:hover {
+            background: rgba(0, 196, 151, 0.12);
+            border-color: var(--verde-cadastro);
+        }
+
+        .btn-pill-glass.active {
+            background: var(--verde-cadastro);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 0 8px rgba(0, 196, 151, 0.3);
+        }
+
+        .guided-viewport-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            max-height: 70vh;
+            border-radius: var(--foto-radius-xl);
+            overflow: hidden;
+            background: #000;
+            border: 2px solid var(--borda);
+            box-shadow: var(--sombra-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #guidedVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scaleX(-1);
+            transition: transform 0.25s ease;
+        }
+
+        #guidedOverlayCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .guided-flash {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 0.08s ease-out;
+        }
+
+        .guided-flash.active {
+            opacity: 0.95;
+            transition: none;
+        }
+
+        .guided-countdown-wrap {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(4px);
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .guided-countdown-wrap.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .countdown-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(0, 196, 151, 0.15);
+            border: 4px solid var(--verde-cadastro);
+            box-shadow: 0 0 35px rgba(0, 196, 151, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: countdownPulse 0.95s ease-in-out infinite;
+        }
+
+        .countdown-circle span {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .countdown-hint {
+            margin-top: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        @keyframes countdownPulse {
+            0%, 100% { transform: scale(1); border-color: var(--verde-cadastro); }
+            50% { transform: scale(1.12); border-color: var(--verde-hover); box-shadow: 0 0 45px rgba(0, 196, 151, 0.5); }
+        }
+
+        .guided-status-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 11px 16px;
+            border-radius: var(--foto-radius-md);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--borda);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 4;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .guided-status-badge.status-ready {
+            border-color: rgba(0, 196, 151, 0.5);
+            background: rgba(240, 253, 244, 0.95);
+            box-shadow: 0 0 20px rgba(0, 196, 151, 0.2);
+        }
+
+        .guided-status-badge.status-warn {
+            border-color: rgba(245, 158, 11, 0.4);
+            background: rgba(255, 251, 235, 0.95);
+        }
+
+        .guided-status-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .guided-status-text {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--cinza-texto);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .guided-checklist {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 14px;
+            margin-top: 10px;
+            gap: 6px;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: var(--foto-radius-lg);
+            box-shadow: var(--sombra);
+        }
+
+        .guided-chk-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--cinza-light);
+            transition: all 0.25s ease;
+        }
+
+        .guided-chk-item .chk-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.25s ease;
+        }
+
+        .guided-chk-item.ok {
+            color: var(--cinza-texto);
+        }
+
+        .guided-chk-item.ok .chk-dot {
+            background: var(--verde-cadastro);
+            box-shadow: 0 0 8px rgba(0, 196, 151, 0.4);
+        }
+
+        .guided-controls {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        /* ── Loading Overlay ── */
+        .loading-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .loading-modal.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid var(--borda);
+            border-top-color: var(--verde-cadastro);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: var(--foto-radius-md);
+            background: var(--azul-escuro);
+            border: 1px solid var(--azul-claro);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 300;
+            display: none;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ── Nudge Flash Feedback ── */
+        @keyframes nudgeFlash {
+            0% { box-shadow: 0 0 0 0 rgba(0, 196, 151, 0.5); }
+            100% { box-shadow: 0 0 0 6px rgba(0, 196, 151, 0); }
+        }
+
+        .zoom-canvas-wrap.nudge-flash {
+            animation: nudgeFlash 0.3s ease;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .foto-hero h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="mode-store">
+    <!-- TOP BAR -->
+    <header class="store-header">
+        <div class="header-container">
+            <div class="header-logo" onclick="window.location.href='index.html'">
+                <div class="logo-box">
+                    <span class="material-icons logo-icon">visibility</span>
+                    <div class="logo-text">
+                        <strong>Ótica</strong><span>Express</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-search">
+                <div class="search-box">
+                    <span class="material-icons search-icon">search</span>
+                    <input type="text" placeholder="Pesquisar..." disabled>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="action-btn" title="Medição Pupilar" onclick="window.location.href='medicao.html'" style="color: var(--verde-cadastro);">
+                    <span class="material-icons">straighten</span>
+                </button>
+                <button class="action-btn" title="Carrinho" onclick="window.location.href='Cliente/carrinho.html'">
+                    <span class="material-icons">shopping_cart</span>
+                    <span class="cart-badge" id="carrinhoQuantidade">0</span>
+                </button>
+                <button class="action-btn user-btn" title="Minha Conta" id="btnHeaderUser">
+                    <span class="material-icons">account_circle</span>
+                    <span id="userNameHeader">Entrar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-container">
+    <div id="app">
+        <!-- ════════════ TELA 1: INÍCIO ════════════ -->
+        <section id="startScreen" class="screen active">
+            <div class="foto-hero">
+                <h1>Medição por Foto</h1>
+                <p>Precisão sub-pixel com ajuste fino guiado passo a passo</p>
+            </div>
+
+            <div class="instructions-card">
+                <h3>Como obter precisão máxima:</h3>
+                <ol class="steps-list">
+                    <li class="step-item">
+                        <span class="step-num">1</span>
+                        <span>Segure um <strong>cartão bancário deitado</strong> encostado na testa, com os 4 cantos
+                            livres.</span>
+                    </li>
+                    <li class="step-item">
+                        <span class="step-num">2</span>
+                        <span>Olhe <strong>direto para a lente da câmera</strong> com a cabeça reta e tire a foto em
+                            <strong>alta resolução</strong>.</span>
+                    </li>
+                    <li class="step-item">
+                        <span class="step-num">3</span>
+                        <span>Posicione cada ponto com o guia <strong>passo a passo</strong>. Use o <strong>painel de
+                                zoom</strong> e o <strong>D-pad (±1px)</strong> para ajuste de alta precisão.</span>
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Acordeão: Instruções de Medição Manual para Comparação -->
+            <div class="manual-accordion-wrap">
+                <button type="button" class="manual-accordion-toggle" id="btnToggleManualGuide" onclick="toggleManualGuide()">
+                    <div class="manual-acc-header-left">
+                        <span class="material-icons" style="color:var(--verde-cadastro); font-size:1.2rem;">straighten</span>
+                        <span>Quer comparar? Veja como fazer a medição manual com régua</span>
+                    </div>
+                    <span class="material-icons" id="manualAccChevron" style="transition: transform 0.25s ease;">expand_more</span>
+                </button>
+                <div class="manual-accordion-body" id="manualAccordionBody" style="display:none;">
+                    <p style="font-size:0.82rem; color:var(--cinza-escuro); line-height:1.45; margin: 12px 0 10px;">
+                        Você pode medir sua Distância Pupilar (DP) manualmente em casa para conferir e comparar com o resultado do sistema:
+                    </p>
+                    <ol class="steps-list" style="gap:10px;">
+                        <li class="step-item">
+                            <span class="step-num" style="background:var(--azul-claro);">1</span>
+                            <span><strong>No espelho (~20 a 30 cm):</strong> Apoie uma régua milimétrica sobre a ponte do nariz, com a cabeça reta e boa iluminação.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-num" style="background:var(--azul-claro);">2</span>
+                            <span><strong>Alinhe o Zero:</strong> Feche o olho direito e alinhe o marco 0 mm exatamente no centro da sua pupila esquerda no espelho.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-num" style="background:var(--azul-claro);">3</span>
+                            <span><strong>Leitura da DP:</strong> Sem mover a régua, abra o olho direito e feche o esquerdo. Olhe para frente e leia a marcação em milímetros no centro da pupila direita.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-num" style="background:var(--azul-claro);">4</span>
+                            <span><strong>DNP (de cada olho):</strong> Verifique a marcação no centro da ponte nasal para obter a DNP de cada lado (geralmente entre 28 e 34 mm).</span>
+                        </li>
+                    </ol>
+
+                    <div style="background:#f3f4f6; border-radius:10px; padding:10px 12px; margin-top:12px; font-size:0.77rem; color:var(--cinza-texto); line-height:1.4;">
+                        💡 <em>Dica de Precisão:</em> Uma diferença de <strong>1 a 2 mm</strong> entre a medição com régua e o sistema digital é comum (decorrente da leve convergência dos olhos ao focar de perto). O sistema digital utiliza visão computacional e cartão padrão ISO para precisão sub-pixel.
+                    </div>
+
+                    <div class="manual-input-box" style="margin-top:12px; padding:12px 14px;">
+                        <div class="manual-input-info" style="min-width:180px;">
+                            <h4 style="font-size:0.84rem;">Já mediu na régua? Anote aqui para comparar:</h4>
+                        </div>
+                        <div class="manual-input-controls">
+                            <div class="manual-num-input-wrap">
+                                <input type="number" id="inputManualDPStart" class="manual-num-input" style="width:78px; padding:6px 10px; padding-right:30px; font-size:0.88rem;" placeholder="63" min="40" max="85" step="0.5">
+                                <span class="manual-num-unit" style="font-size:0.72rem;">mm</span>
+                            </div>
+                            <button type="button" class="manual-btn-save" id="btnSaveManualDPStart" onclick="salvarManualDPStart()" style="padding:7px 14px; font-size:0.78rem;">
+                                Salvar DP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="capture-options">
+                <button id="btnStartGuidedCamera" class="btn-foto-capture">
+                    <span class="material-icons" style="font-size:1.3rem">auto_awesome</span>
+                    <span>Câmera Guiada com Auto-Disparo</span>
+                </button>
+
+                <button id="btnCameraCapture" class="btn-foto-secondary">
+                    <span class="material-icons" style="font-size:1.1rem">photo_camera</span>
+                    <span>Tirar Foto Tradicional (Câmera Nativa)</span>
+                </button>
+                <input type="file" id="inputCamera" accept="image/*" capture="user" style="display:none">
+
+                <button id="btnUploadPhoto" class="btn-foto-secondary">
+                    <span class="material-icons" style="font-size:1.1rem">folder_open</span>
+                    <span>Escolher Foto da Galeria</span>
+                </button>
+                <input type="file" id="inputUpload" accept="image/*" style="display:none">
+
+                <button id="btnDemoPhoto" class="btn-foto-secondary" style="border-style:dashed; opacity:0.85;">
+                    <span class="material-icons" style="font-size:1.1rem">science</span>
+                    <span>Testar com Foto de Exemplo</span>
+                </button>
+            </div>
+
+            <p style="font-size:0.73rem; color:var(--cinza-light); text-align:center; max-width:440px;">
+                💡 A Câmera Guiada analisa a distância e o alinhamento em tempo real, disparando automaticamente na
+                condição ideal.
+            </p>
+        </section>
+
+        <!-- ════════════ TELA 1.5: CÂMERA GUIADA INTELIGENTE ════════════ -->
+        <section id="guidedCameraScreen" class="screen">
+            <div class="guided-header">
+                <button id="btnGuidedBack" class="btn-icon-glass" title="Voltar para o início">←</button>
+                <div class="guided-title-wrap">
+                    <h2>Câmera Guiada</h2>
+                    <span class="guided-subtitle">Auto-Disparo Inteligente</span>
+                </div>
+                <div class="guided-header-actions">
+                    <button id="btnToggleMirror" class="btn-icon-glass active"
+                        title="Alternar Espelhamento (Modo Selfie / Direto)">🪞</button>
+                    <button id="btnSwitchCamera" class="btn-icon-glass"
+                        title="Alternar Câmera (Frontal/Traseira)">🔄</button>
+                    <button id="btnToggleZoom" class="btn-pill-glass" title="Alternar Zoom 1x / 2x">1x</button>
+                </div>
+            </div>
+
+            <!-- Viewport da Câmera -->
+            <div class="guided-viewport-wrap">
+                <video id="guidedVideo" playsinline autoplay muted></video>
+                <canvas id="guidedOverlayCanvas"></canvas>
+
+                <!-- Flash de captura -->
+                <div id="guidedFlash" class="guided-flash"></div>
+
+                <!-- Overlay de Contagem Regressiva -->
+                <div id="guidedCountdownOverlay" class="guided-countdown-wrap">
+                    <div class="countdown-circle">
+                        <span id="countdownNumber">3</span>
+                    </div>
+                    <span class="countdown-hint">Não se mova! Capturando...</span>
+                </div>
+
+                <!-- Badge de Instrução em Tempo Real -->
+                <div id="guidedStatusBadge" class="guided-status-badge">
+                    <span id="guidedStatusIcon" class="guided-status-icon">📏</span>
+                    <span id="guidedStatusText" class="guided-status-text">Posicione o rosto dentro da área
+                        indicada</span>
+                </div>
+            </div>
+
+            <!-- Checklist de Condições -->
+            <div class="guided-checklist">
+                <div id="chkDistance" class="guided-chk-item">
+                    <span class="chk-dot"></span>
+                    <span class="chk-label">Distância (~1m)</span>
+                </div>
+                <div id="chkTilt" class="guided-chk-item">
+                    <span class="chk-dot"></span>
+                    <span class="chk-label">Cabeça Reta</span>
+                </div>
+                <div id="chkStability" class="guided-chk-item">
+                    <span class="chk-dot"></span>
+                    <span class="chk-label">Estabilidade</span>
+                </div>
+            </div>
+
+            <!-- Controles Inferiores -->
+            <div class="guided-controls">
+                <button id="btnToggleAutoCapture" class="btn-foto-secondary" style="flex:1;">
+                    <span id="autoCaptureIcon">⚡</span>
+                    <span id="autoCaptureLabel">Auto-Disparo: ON</span>
+                </button>
+                <button id="btnManualCapture" class="btn-foto-capture" style="flex:2;">
+                    <span>📸 Capturar Agora</span>
+                </button>
+            </div>
+
+            <p style="font-size:0.75rem; color:var(--cinza-light); text-align:center; margin-top:10px;">
+                💡 Segure o cartão horizontalmente na testa. Quando os 3 itens ficarem verdes, o disparo será
+                automático!
+            </p>
+        </section>
+
+        <!-- ════════════ TELA 2: EDITOR DE PRECISÃO ════════════ -->
+        <section id="editorScreen" class="screen">
+
+            <!-- Step Indicator -->
+            <div class="step-bar" id="stepBar">
+                <button class="step-nav-btn" id="btnPrevStep" disabled>‹</button>
+                <div class="step-info">
+                    <div class="step-dots" id="stepDots"></div>
+                    <div class="step-title" id="stepTitle">—</div>
+                    <div class="step-hint" id="stepHint">—</div>
+                </div>
+                <button class="step-nav-btn" id="btnNextStep">›</button>
+            </div>
+
+            <!-- Zoom Preview Panel -->
+            <div class="zoom-panel" id="zoomPanel">
+                <div class="zoom-header">
+                    <span class="zoom-coords" id="zoomCoords">📍 —</span>
+                    <div class="zoom-slider-wrap">
+                        <label>🔍</label>
+                        <input type="range" id="zoomSlider" min="3" max="8" step="0.5" value="5">
+                        <span class="zoom-level-text" id="zoomLevelText">5.0×</span>
+                    </div>
+                </div>
+                <div class="zoom-viewport">
+                    <div class="zoom-canvas-wrap" id="zoomCanvasWrap">
+                        <canvas id="zoomCanvas" width="320" height="180"></canvas>
+                        <div class="zoom-crosshair"></div>
+                        <div class="zoom-center-ring"></div>
+                    </div>
+                </div>
+                <div class="dpad-container">
+                    <div class="dpad-grid">
+                        <div></div>
+                        <button class="dpad-btn" id="dpadUp" aria-label="Mover para cima">▲</button>
+                        <div></div>
+                        <button class="dpad-btn" id="dpadLeft" aria-label="Mover para esquerda">◄</button>
+                        <button class="dpad-btn center" id="dpadCenter" aria-label="Centralizar">●</button>
+                        <button class="dpad-btn" id="dpadRight" aria-label="Mover para direita">►</button>
+                        <div></div>
+                        <button class="dpad-btn" id="dpadDown" aria-label="Mover para baixo">▼</button>
+                        <div></div>
+                    </div>
+                    <div class="dpad-label">
+                        ±1px por toque<br>Segure para mover contínuo
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Canvas -->
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="imageCanvas"></canvas>
+                <!-- Floating Magnifier (appears on drag) -->
+                <div class="magnifier-loupe" id="magnifierLoupe">
+                    <canvas id="magnifierCanvas" width="150" height="150"></canvas>
+                    <div class="magnifier-crosshair"></div>
+                    <div class="magnifier-ring"></div>
+                </div>
+            </div>
+
+            <!-- Quality Banner -->
+            <div class="quality-banner" id="qualityBanner"></div>
+
+            <!-- Points Legend -->
+            <div class="points-legend">
+                <div class="legend-item">
+                    <span class="legend-dot card"></span>
+                    <span>Cartão</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot pupil"></span>
+                    <span>Pupilas</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot nose"></span>
+                    <span>Ponte Nasal</span>
+                </div>
+            </div>
+
+            <!-- Fixed Bottom Bar -->
+            <div class="editor-bottom-bar">
+                <div class="live-preview">
+                    <span class="live-label">DP Estimada</span>
+                    <span class="live-val" id="liveDPText">— mm</span>
+                </div>
+                <button id="btnEditorAction" class="btn-confirm">
+                    <span id="btnEditorActionText">Próximo</span>
+                    <span id="btnEditorActionIcon">›</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ════════════ TELA 3: RESULTADOS ════════════ -->
+        <section id="resultScreen" class="screen">
+            <div class="med-modal" style="margin: 20px auto; width: 100%; max-width: 440px; box-shadow: var(--sombra); border: 1px solid var(--borda); transform: none;">
+                <div class="med-modal-icon">
+                    <span class="material-icons">check_circle</span>
+                </div>
+                <h2>Medição Concluída!</h2>
+                <p class="modal-sub">Confira os resultados abaixo:</p>
+
+                <div class="med-modal-results">
+                    <div class="med-result-row">
+                        <span class="result-label">DP Binocular</span>
+                        <span class="result-value highlight" id="modal_dp_bino">-- mm</span>
+                    </div>
+                    <div class="med-result-row">
+                        <span class="result-label">DP Olho Esquerdo</span>
+                        <span class="result-value" id="modal_dp_esq">-- mm</span>
+                    </div>
+                    <div class="med-result-row">
+                        <span class="result-label">DP Olho Direito</span>
+                        <span class="result-value" id="modal_dp_dir">-- mm</span>
+                    </div>
+                </div>
+
+                <!-- Bloco de Comparação com Medição Manual -->
+                <div class="result-comparison-card" id="resultManualCompBox" style="display:none;"></div>
+
+                <div class="med-modal-actions" style="flex-direction: column; gap: 10px;">
+                    <button class="modal-btn-confirm" id="modalConfirm" style="width: 100%;">
+                        <span class="material-icons" style="font-size:1.1rem;vertical-align:middle;margin-right:4px;">check</span>
+                        Confirmar Medição
+                    </button>
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <button class="modal-btn-cancel" id="btnRetouch" style="flex: 1;">
+                            <span class="material-icons" style="font-size:1rem;vertical-align:middle;margin-right:4px;">tune</span>
+                            Ajustar Pontos
+                        </button>
+                        <button class="modal-btn-cancel" id="modalCancel" style="flex: 1;">
+                            <span class="material-icons" style="font-size:1rem;vertical-align:middle;margin-right:4px;">close</span>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Modal -->
+        <div class="loading-modal" id="loadingModal">
+            <div class="spinner"></div>
+            <p id="loadingText" style="font-size:0.9rem; font-weight:600; color:var(--azul-escuro);">Processando...</p>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toastBox"></div>
+    </div>
+    </div>
+
+    <!-- ════════════ SCRIPTS ════════════ -->
+    <script src="auth.js"></script>
+    <script src="https://docs.opencv.org/4.9.0/opencv.js" async></script>
+    <script>
+        /* ═══════════════════════════════════════════════════ */
+        /*  CONSTANTES                                        */
+        /* ═══════════════════════════════════════════════════ */
+        const CARD_WIDTH_MM = 85.60;
+        const CARD_HEIGHT_MM = 53.98;
+        const CARD_ASPECT = CARD_WIDTH_MM / CARD_HEIGHT_MM; // ≈ 1.586
+        const DEPTH_CORRECTION = 0.98; // compensação testa → plano pupilar (~15-20mm)
+        const MEDIAPIPE_VERSION = '0.10.17';
+
+        /* Definição dos 7 passos do fluxo guiado */
+        const STEPS = [
+            { key: 'cardTL', label: 'Canto Superior Esquerdo do Cartão', hint: 'Posicione no canto exato — use o zoom e o D-pad para ajuste fino', icon: '◰', category: 'card' },
+            { key: 'cardTR', label: 'Canto Superior Direito do Cartão', hint: 'Alinhe na quina externa do cartão', icon: '◳', category: 'card' },
+            { key: 'cardBR', label: 'Canto Inferior Direito do Cartão', hint: 'Ajuste na quina inferior direita', icon: '◲', category: 'card' },
+            { key: 'cardBL', label: 'Canto Inferior Esquerdo do Cartão', hint: 'Complete o quadrilátero do cartão', icon: '◱', category: 'card' },
+            { key: 'pupilR', label: 'Centro da Pupila Direita (OD)', hint: 'Centralize exatamente no ponto negro da pupila — este passo é o mais crítico!', icon: '👁', category: 'pupil' },
+            { key: 'pupilL', label: 'Centro da Pupila Esquerda (OE)', hint: 'Centralize no ponto negro da pupila esquerda', icon: '👁', category: 'pupil' },
+            { key: 'noseBridge', label: 'Ponte Nasal (Centro entre os Olhos)', hint: 'Posicione no topo do nariz, entre as sobrancelhas', icon: '👃', category: 'nose' },
+        ];
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  ESTADO DA APLICAÇÃO                               */
+        /* ═══════════════════════════════════════════════════ */
+        const App = {
+            screen: 'start',
+            faceLandmarker: null,
+            loadedImage: null,
+            imageWidth: 0,
+            imageHeight: 0,
+            displayScale: 1,
+
+            points: {
+                cardTL: { x: 0, y: 0, label: 'Cartão Sup. Esq.', color: '#38bdf8' },
+                cardTR: { x: 0, y: 0, label: 'Cartão Sup. Dir.', color: '#38bdf8' },
+                cardBR: { x: 0, y: 0, label: 'Cartão Inf. Dir.', color: '#38bdf8' },
+                cardBL: { x: 0, y: 0, label: 'Cartão Inf. Esq.', color: '#38bdf8' },
+                pupilR: { x: 0, y: 0, label: 'Pupila Dir. (OD)', color: '#10b981' },
+                pupilL: { x: 0, y: 0, label: 'Pupila Esq. (OE)', color: '#10b981' },
+                noseBridge: { x: 0, y: 0, label: 'Ponte Nasal', color: '#f59e0b' },
+                zigoR: { x: 0, y: 0, label: 'Zigo Dir.', color: '#818cf8', hidden: true },
+                zigoL: { x: 0, y: 0, label: 'Zigo Esq.', color: '#818cf8', hidden: true },
+            },
+
+            currentStep: 0,
+            isReviewMode: false,
+            activePointKey: null,
+            isDragging: false,
+            zoomLevel: 5,
+            results: null,
+        };
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  REFERÊNCIAS DOM                                   */
+        /* ═══════════════════════════════════════════════════ */
+        const $ = (id) => document.getElementById(id);
+        const canvas = $('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const loupe = $('magnifierLoupe');
+        const loupeCanvas = $('magnifierCanvas');
+        const loupeCtx = loupeCanvas.getContext('2d');
+        const zoomCanvas = $('zoomCanvas');
+        const zoomCtx = zoomCanvas.getContext('2d');
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  MEDIAPIPE INIT (Dinâmico com Fallback)            */
+        /* ═══════════════════════════════════════════════════ */
+        async function initMediaPipe() {
+            try {
+                const vision = await import(
+                    `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MEDIAPIPE_VERSION}/vision_bundle.mjs`
+                );
+                const { FilesetResolver, FaceLandmarker } = vision;
+                const fileset = await FilesetResolver.forVisionTasks(
+                    `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MEDIAPIPE_VERSION}/wasm`
+                );
+
+                try {
+                    App.faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
+                        baseOptions: {
+                            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task',
+                            delegate: 'GPU'
+                        },
+                        runningMode: 'IMAGE',
+                        numFaces: 1,
+                        outputFacialTransformationMatrixes: true
+                    });
+                    console.log('[MediaPipe] FaceLandmarker pronto via GPU (com matriz 3D)!');
+                } catch (gpuErr) {
+                    console.warn('[MediaPipe] GPU delegate falhou, tentando CPU...', gpuErr);
+                    try {
+                        App.faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
+                            baseOptions: {
+                                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task',
+                                delegate: 'CPU'
+                            },
+                            runningMode: 'IMAGE',
+                            numFaces: 1,
+                            outputFacialTransformationMatrixes: true
+                        });
+                        console.log('[MediaPipe] FaceLandmarker pronto via CPU (com matriz 3D)!');
+                    } catch (cpuErr) {
+                        App.faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
+                            baseOptions: {
+                                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task',
+                                delegate: 'CPU'
+                            },
+                            runningMode: 'IMAGE',
+                            numFaces: 1
+                        });
+                        console.log('[MediaPipe] FaceLandmarker pronto via CPU (básico)!');
+                    }
+                }
+            } catch (err) {
+                console.warn('[MediaPipe] Falha ao carregar modelo de IA (modo manual ativo):', err);
+            }
+        }
+        initMediaPipe();
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  UTILITÁRIOS                                       */
+        /* ═══════════════════════════════════════════════════ */
+        function showScreen(name) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = $(name + 'Screen');
+            if (target) {
+                target.classList.add('active');
+                App.screen = name;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = $('toastBox');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        function showLoading(msg) {
+            $('loadingText').textContent = msg || 'Processando...';
+            $('loadingModal').classList.add('active');
+        }
+        function hideLoading() {
+            $('loadingModal').classList.remove('active');
+        }
+
+        function dist2D(a, b) {
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        }
+
+        /** Retorna a chave do ponto ativo (passo atual ou selecionado em revisão) */
+        function getActiveKey() {
+            if (App.isReviewMode) return App.activePointKey;
+            return STEPS[App.currentStep]?.key || null;
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  CARREGAMENTO DE FOTOS                             */
+        /* ═══════════════════════════════════════════════════ */
+        $('btnCameraCapture').addEventListener('click', () => $('inputCamera').click());
+        $('btnUploadPhoto').addEventListener('click', () => $('inputUpload').click());
+        $('btnDemoPhoto').addEventListener('click', loadDemoPhoto);
+
+        $('inputCamera').addEventListener('change', handleFileSelected);
+        $('inputUpload').addEventListener('change', handleFileSelected);
+
+        function handleFileSelected(e) {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            showLoading('Carregando foto em resolução nativa...');
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    App.loadedImage = img;
+                    App.imageWidth = img.naturalWidth || img.width;
+                    App.imageHeight = img.naturalHeight || img.height;
+                    processLoadedPhoto();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        }
+
+        function loadDemoPhoto() {
+            showLoading('Gerando foto de exemplo HD...');
+            const demoCanvas = document.createElement('canvas');
+            demoCanvas.width = 1200;
+            demoCanvas.height = 1600;
+            const dctx = demoCanvas.getContext('2d');
+
+            // Fundo
+            const bgGrad = dctx.createRadialGradient(600, 700, 100, 600, 800, 900);
+            bgGrad.addColorStop(0, '#2d3748');
+            bgGrad.addColorStop(1, '#111827');
+            dctx.fillStyle = bgGrad;
+            dctx.fillRect(0, 0, 1200, 1600);
+
+            // Rosto
+            dctx.fillStyle = '#f5d0b5';
+            dctx.beginPath();
+            dctx.ellipse(600, 850, 320, 440, 0, 0, Math.PI * 2);
+            dctx.fill();
+
+            // Cartão na testa (514 x 324 px → proporção ISO 1.586, ~6.0 px/mm)
+            const cX = 343, cY = 480, cW = 514, cH = 324;
+            dctx.fillStyle = '#1e3a8a';
+            dctx.beginPath();
+            if (dctx.roundRect) dctx.roundRect(cX, cY, cW, cH, 18);
+            else dctx.rect(cX, cY, cW, cH);
+            dctx.fill();
+            dctx.strokeStyle = '#60a5fa';
+            dctx.lineWidth = 5;
+            dctx.stroke();
+
+            // Chip dourado
+            dctx.fillStyle = '#fbbf24';
+            dctx.fillRect(cX + 60, cY + 110, 80, 65);
+            dctx.strokeStyle = '#d97706';
+            dctx.lineWidth = 2;
+            dctx.strokeRect(cX + 60, cY + 110, 80, 65);
+
+            // Texto do cartão
+            dctx.fillStyle = 'rgba(255,255,255,0.7)';
+            dctx.font = 'bold 22px Inter, sans-serif';
+            dctx.fillText('BANCO EXEMPLO', cX + 60, cY + 60);
+
+            // Olho Direito (OD) — centro em x=447, y=880
+            dctx.fillStyle = '#ffffff';
+            dctx.beginPath(); dctx.ellipse(447, 880, 56, 32, 0, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#2563eb';
+            dctx.beginPath(); dctx.arc(447, 880, 22, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#090d16';
+            dctx.beginPath(); dctx.arc(447, 880, 10, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#ffffff';
+            dctx.beginPath(); dctx.arc(444, 876, 3, 0, Math.PI * 2); dctx.fill();
+
+            // Olho Esquerdo (OE) — centro em x=753, y=880
+            dctx.fillStyle = '#ffffff';
+            dctx.beginPath(); dctx.ellipse(753, 880, 56, 32, 0, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#2563eb';
+            dctx.beginPath(); dctx.arc(753, 880, 22, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#090d16';
+            dctx.beginPath(); dctx.arc(753, 880, 10, 0, Math.PI * 2); dctx.fill();
+            dctx.fillStyle = '#ffffff';
+            dctx.beginPath(); dctx.arc(750, 876, 3, 0, Math.PI * 2); dctx.fill();
+
+            // Ponte Nasal
+            dctx.strokeStyle = '#cb9172'; dctx.lineWidth = 5;
+            dctx.beginPath();
+            dctx.moveTo(600, 850); dctx.lineTo(585, 980); dctx.lineTo(625, 990);
+            dctx.stroke();
+
+            // Lábios
+            dctx.strokeStyle = '#c53030'; dctx.lineWidth = 6;
+            dctx.beginPath();
+            dctx.arc(600, 1100, 60, 0.15 * Math.PI, 0.85 * Math.PI);
+            dctx.stroke();
+
+            const img = new Image();
+            img.onload = () => {
+                App.loadedImage = img;
+                App.imageWidth = 1200;
+                App.imageHeight = 1600;
+                processLoadedPhoto();
+            };
+            img.src = demoCanvas.toDataURL('image/jpeg', 0.92);
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  DETECÇÃO COM IA (MediaPipe)                       */
+        /* ═══════════════════════════════════════════════════ */
+        async function processLoadedPhoto() {
+            showLoading('Detectando rosto e cartão com IA...');
+            const w = App.imageWidth;
+            const h = App.imageHeight;
+
+            let faceFound = false;
+
+            if (App.faceLandmarker && App.loadedImage) {
+                try {
+                    const result = App.faceLandmarker.detect(App.loadedImage);
+                    if (result?.faceLandmarks?.length) {
+                        const lm = result.faceLandmarks[0];
+                        faceFound = true;
+
+                        // Centróides das íris (5 pontos cada) — mais preciso que ponto único
+                        const rIris = [468, 469, 470, 471, 472];
+                        const lIris = [473, 474, 475, 476, 477];
+
+                        const centroid = (indices) => {
+                            let sx = 0, sy = 0;
+                            for (const i of indices) { sx += lm[i].x; sy += lm[i].y; }
+                            return { x: (sx / indices.length) * w, y: (sy / indices.length) * h };
+                        };
+
+                        const pr = centroid(rIris);
+                        const pl = centroid(lIris);
+                        const nb = { x: lm[168].x * w, y: lm[168].y * h };
+                        const zr = { x: lm[234].x * w, y: lm[234].y * h };
+                        const zl = { x: lm[454].x * w, y: lm[454].y * h };
+
+                        App.points.pupilR.x = pr.x; App.points.pupilR.y = pr.y;
+                        App.points.pupilL.x = pl.x; App.points.pupilL.y = pl.y;
+                        App.points.noseBridge.x = nb.x; App.points.noseBridge.y = nb.y;
+                        App.points.zigoR.x = zr.x; App.points.zigoR.y = zr.y;
+                        App.points.zigoL.x = zl.x; App.points.zigoL.y = zl.y;
+
+                        // Estimativa da posição do cartão na testa
+                        const topHead = { x: lm[10].x * w, y: lm[10].y * h };
+                        const faceW = dist2D(zr, zl);
+                        const cardEstW = faceW * 0.62;
+                        const cardEstH = cardEstW / CARD_ASPECT;
+                        const cardCenterY = (topHead.y + nb.y) / 2;
+
+                        App.points.cardTL = { ...App.points.cardTL, x: nb.x - cardEstW / 2, y: cardCenterY - cardEstH / 2 };
+                        App.points.cardTR = { ...App.points.cardTR, x: nb.x + cardEstW / 2, y: cardCenterY - cardEstH / 2 };
+                        App.points.cardBR = { ...App.points.cardBR, x: nb.x + cardEstW / 2, y: cardCenterY + cardEstH / 2 };
+                        App.points.cardBL = { ...App.points.cardBL, x: nb.x - cardEstW / 2, y: cardCenterY + cardEstH / 2 };
+                    }
+                } catch (e) {
+                    console.warn('[detectFace] erro:', e);
+                }
+            }
+
+            // Fallback se não detectou rosto
+            if (!faceFound) {
+                const cx = w / 2, cy = h * 0.5;
+                const defW = w * 0.28, defH = defW / CARD_ASPECT;
+                App.points.pupilR = { ...App.points.pupilR, x: cx - defW * 0.45, y: cy };
+                App.points.pupilL = { ...App.points.pupilL, x: cx + defW * 0.45, y: cy };
+                App.points.noseBridge = { ...App.points.noseBridge, x: cx, y: cy };
+                App.points.cardTL = { ...App.points.cardTL, x: cx - defW / 2, y: cy - defH * 1.5 };
+                App.points.cardTR = { ...App.points.cardTR, x: cx + defW / 2, y: cy - defH * 1.5 };
+                App.points.cardBR = { ...App.points.cardBR, x: cx + defW / 2, y: cy - defH * 0.5 };
+                App.points.cardBL = { ...App.points.cardBL, x: cx - defW / 2, y: cy - defH * 0.5 };
+            }
+
+            hideLoading();
+
+            // Iniciar fluxo guiado
+            App.currentStep = 0;
+            App.isReviewMode = false;
+            App.activePointKey = null;
+
+            showScreen('editor');
+            setupCanvas();
+            updateStepUI();
+            render();
+            updateZoomPanel();
+            updateLiveCalc();
+            updateQualityBanner(faceFound);
+
+            showToast(faceFound
+                ? 'IA posicionou os pontos — revise e ajuste cada um passo a passo!'
+                : 'Rosto não detectado — posicione todos os pontos manualmente.'
+            );
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  QUALITY BANNER                                    */
+        /* ═══════════════════════════════════════════════════ */
+        function updateQualityBanner(faceFound) {
+            const w = App.imageWidth;
+            const h = App.imageHeight;
+            const megapixels = (w * h / 1_000_000).toFixed(1);
+
+            let resQuality = 'good';
+            let resLabel = `${w}×${h} (${megapixels} MP)`;
+            if (w * h < 500_000) { resQuality = 'bad'; resLabel += ' ⚠️ Baixa'; }
+            else if (w * h < 2_000_000) { resQuality = 'warn'; resLabel += ' — Média'; }
+            else { resLabel += ' ✓'; }
+
+            const iaLabel = faceFound ? 'IA ✓' : 'Manual';
+            const iaQuality = faceFound ? 'good' : 'warn';
+
+            $('qualityBanner').innerHTML = `
+                <div class="quality-item"><span class="quality-dot ${resQuality}"></span>${resLabel}</div>
+                <div class="quality-item"><span class="quality-dot ${iaQuality}"></span>${iaLabel}</div>
+            `;
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  STEP NAVIGATION                                   */
+        /* ═══════════════════════════════════════════════════ */
+        function updateStepUI() {
+            const dotsEl = $('stepDots');
+            const titleEl = $('stepTitle');
+            const hintEl = $('stepHint');
+            const prevBtn = $('btnPrevStep');
+            const nextBtn = $('btnNextStep');
+            const actionBtn = $('btnEditorAction');
+            const actionText = $('btnEditorActionText');
+            const actionIcon = $('btnEditorActionIcon');
+
+            // Gerar dots
+            let dotsHTML = '';
+            for (let i = 0; i < STEPS.length; i++) {
+                if (App.isReviewMode) {
+                    const isActive = App.activePointKey === STEPS[i].key;
+                    dotsHTML += `<span class="step-dot ${isActive ? 'review-active' : 'completed'}"></span>`;
+                } else if (i < App.currentStep) {
+                    dotsHTML += `<span class="step-dot completed"></span>`;
+                } else if (i === App.currentStep) {
+                    dotsHTML += `<span class="step-dot current"></span>`;
+                } else {
+                    dotsHTML += `<span class="step-dot"></span>`;
+                }
+            }
+            dotsEl.innerHTML = dotsHTML;
+
+            if (App.isReviewMode) {
+                titleEl.textContent = '✓ Revisão Final — Toque em qualquer ponto para ajustar';
+                hintEl.textContent = 'Use o D-pad para refinamento sub-pixel. Quando satisfeito, confirme.';
+                prevBtn.disabled = false;
+                nextBtn.disabled = true;
+                actionText.textContent = 'Confirmar Medidas';
+                actionIcon.textContent = '✓';
+                actionBtn.className = 'btn-confirm finish';
+            } else {
+                const step = STEPS[App.currentStep];
+                titleEl.textContent = `Passo ${App.currentStep + 1}/${STEPS.length}: ${step.label}`;
+                hintEl.textContent = step.hint;
+                prevBtn.disabled = App.currentStep === 0;
+                nextBtn.disabled = false;
+                actionText.textContent = App.currentStep < STEPS.length - 1 ? 'Próximo' : 'Revisar Todos';
+                actionIcon.textContent = App.currentStep < STEPS.length - 1 ? '›' : '⚙';
+                actionBtn.className = 'btn-confirm';
+            }
+
+            // Atualizar ponto ativo
+            if (!App.isReviewMode) {
+                App.activePointKey = STEPS[App.currentStep].key;
+            }
+        }
+
+        function goToStep(index) {
+            if (index < 0 || index >= STEPS.length) return;
+            App.currentStep = index;
+            App.isReviewMode = false;
+            updateStepUI();
+            render();
+            updateZoomPanel();
+        }
+
+        function nextStep() {
+            if (App.isReviewMode) {
+                finalizeResults();
+                return;
+            }
+            if (App.currentStep < STEPS.length - 1) {
+                App.currentStep++;
+                updateStepUI();
+                render();
+                updateZoomPanel();
+            } else {
+                enterReviewMode();
+            }
+        }
+
+        function prevStep() {
+            if (App.isReviewMode) {
+                App.isReviewMode = false;
+                App.currentStep = STEPS.length - 1;
+                updateStepUI();
+                render();
+                updateZoomPanel();
+                return;
+            }
+            if (App.currentStep > 0) {
+                App.currentStep--;
+                updateStepUI();
+                render();
+                updateZoomPanel();
+            }
+        }
+
+        function enterReviewMode() {
+            App.isReviewMode = true;
+            App.activePointKey = STEPS[0].key; // começar selecionando o primeiro
+            updateStepUI();
+            render();
+            updateZoomPanel();
+        }
+
+        $('btnPrevStep').addEventListener('click', prevStep);
+        $('btnNextStep').addEventListener('click', nextStep);
+        $('btnEditorAction').addEventListener('click', nextStep);
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  CANVAS SETUP & RENDERING                          */
+        /* ═══════════════════════════════════════════════════ */
+        function setupCanvas() {
+            const container = $('canvasContainer');
+            const maxDisplayW = container.clientWidth || 360;
+            App.displayScale = maxDisplayW / App.imageWidth;
+            const displayH = Math.round(App.imageHeight * App.displayScale);
+            canvas.width = maxDisplayW;
+            canvas.height = displayH;
+        }
+
+        window.addEventListener('resize', () => {
+            if (App.screen === 'editor' && App.loadedImage) {
+                setupCanvas();
+                render();
+            }
+        });
+
+        function render() {
+            if (!App.loadedImage) return;
+            const s = App.displayScale;
+
+            // 1. Foto de fundo
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(App.loadedImage, 0, 0, canvas.width, canvas.height);
+
+            const { cardTL, cardTR, cardBR, cardBL, pupilR, pupilL, noseBridge } = App.points;
+            const activeKey = getActiveKey();
+
+            // 2. Contorno do cartão
+            ctx.save();
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cardTL.x * s, cardTL.y * s);
+            ctx.lineTo(cardTR.x * s, cardTR.y * s);
+            ctx.lineTo(cardBR.x * s, cardBR.y * s);
+            ctx.lineTo(cardBL.x * s, cardBL.y * s);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
+            ctx.fill();
+
+            // 3. Linha pupilar
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.8)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(pupilR.x * s, pupilR.y * s);
+            ctx.lineTo(pupilL.x * s, pupilL.y * s);
+            ctx.stroke();
+
+            // 4. Linhas monoculares nariz→pupilas
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(pupilR.x * s, pupilR.y * s);
+            ctx.lineTo(noseBridge.x * s, noseBridge.y * s);
+            ctx.lineTo(pupilL.x * s, pupilL.y * s);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // 5. Pinos interativos
+            for (const [key, pt] of Object.entries(App.points)) {
+                if (pt.hidden) continue;
+
+                const sx = pt.x * s;
+                const sy = pt.y * s;
+                const isActive = (activeKey === key);
+
+                // Determinar opacidade no modo passo a passo
+                let alpha = 1;
+                if (!App.isReviewMode) {
+                    const stepIdx = STEPS.findIndex(st => st.key === key);
+                    if (stepIdx > App.currentStep) alpha = 0.3;
+                    else if (stepIdx < App.currentStep) alpha = 0.6;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = alpha;
+
+                // Halo pulsante para ponto ativo
+                if (isActive) {
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 16, 0, Math.PI * 2);
+                    ctx.fillStyle = pt.color + '30';
+                    ctx.fill();
+                }
+
+                // Círculo principal
+                ctx.beginPath();
+                ctx.arc(sx, sy, isActive ? 10 : 7, 0, Math.PI * 2);
+                ctx.fillStyle = pt.color;
+                ctx.shadowColor = pt.color;
+                ctx.shadowBlur = isActive ? 14 : 6;
+                ctx.fill();
+
+                // Borda branca
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = isActive ? 2.5 : 1.5;
+                ctx.stroke();
+
+                // Centro branco
+                ctx.beginPath();
+                ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 0;
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  ZOOM PREVIEW PANEL                                */
+        /* ═══════════════════════════════════════════════════ */
+        function updateZoomPanel() {
+            const key = getActiveKey();
+            if (!key || !App.points[key] || !App.loadedImage) return;
+
+            const pt = App.points[key];
+            const zoom = App.zoomLevel;
+            const panelW = zoomCanvas.width;
+            const panelH = zoomCanvas.height;
+
+            // Região fonte na imagem original
+            const srcW = panelW / zoom;
+            const srcH = panelH / zoom;
+            const srcX = pt.x - srcW / 2;
+            const srcY = pt.y - srcH / 2;
+
+            zoomCtx.clearRect(0, 0, panelW, panelH);
+            // Desligar suavização para ver pixels individuais em zoom alto
+            zoomCtx.imageSmoothingEnabled = zoom >= 6 ? false : true;
+
+            zoomCtx.drawImage(
+                App.loadedImage,
+                srcX, srcY, srcW, srcH,
+                0, 0, panelW, panelH
+            );
+
+            // Desenhar outros pontos que estejam dentro da área visível do zoom
+            for (const [k, p] of Object.entries(App.points)) {
+                if (p.hidden) continue;
+                const zx = (p.x - srcX) * zoom;
+                const zy = (p.y - srcY) * zoom;
+                if (zx >= -10 && zx <= panelW + 10 && zy >= -10 && zy <= panelH + 10) {
+                    zoomCtx.save();
+                    zoomCtx.beginPath();
+                    zoomCtx.arc(zx, zy, k === key ? 5 : 3, 0, Math.PI * 2);
+                    zoomCtx.fillStyle = p.color;
+                    zoomCtx.globalAlpha = k === key ? 0.9 : 0.5;
+                    zoomCtx.fill();
+                    zoomCtx.strokeStyle = '#fff';
+                    zoomCtx.lineWidth = 1;
+                    zoomCtx.stroke();
+                    zoomCtx.restore();
+                }
+            }
+
+            // Atualizar coordenadas
+            $('zoomCoords').textContent = `📍 (${Math.round(pt.x)}, ${Math.round(pt.y)}) — ${App.points[key].label}`;
+        }
+
+        // Zoom slider
+        $('zoomSlider').addEventListener('input', (e) => {
+            App.zoomLevel = parseFloat(e.target.value);
+            $('zoomLevelText').textContent = `${App.zoomLevel.toFixed(1)}×`;
+            updateZoomPanel();
+        });
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  FLOATING MAGNIFIER (drag-time)                    */
+        /* ═══════════════════════════════════════════════════ */
+        function updateLoupe(pointX, pointY, touchClientX, touchClientY) {
+            if (!App.loadedImage) return;
+
+            const zoom = 4.0;
+            const size = 150;
+
+            loupeCtx.clearRect(0, 0, size, size);
+            loupeCtx.imageSmoothingEnabled = false;
+
+            const srcW = size / zoom;
+            const srcH = size / zoom;
+            const srcX = pointX - srcW / 2;
+            const srcY = pointY - srcH / 2;
+
+            loupeCtx.drawImage(App.loadedImage, srcX, srcY, srcW, srcH, 0, 0, size, size);
+
+            // Posicionar lupa acima do dedo
+            const containerRect = $('canvasContainer').getBoundingClientRect();
+            const relTouchX = touchClientX - containerRect.left;
+            const relTouchY = touchClientY - containerRect.top;
+
+            let loupeX = relTouchX - size / 2;
+            let loupeY = relTouchY - size - 30;
+
+            loupeX = Math.max(5, Math.min(containerRect.width - size - 5, loupeX));
+            if (loupeY < 5) loupeY = relTouchY + 40;
+
+            loupe.style.transform = `translate(${loupeX}px, ${loupeY}px)`;
+            loupe.classList.add('active');
+        }
+
+        function hideLoupe() {
+            loupe.classList.remove('active');
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  TOUCH & MOUSE HANDLERS                            */
+        /* ═══════════════════════════════════════════════════ */
+        function getCanvasCoords(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (clientX - rect.left) / App.displayScale,
+                y: (clientY - rect.top) / App.displayScale,
+            };
+        }
+
+        function findClosestPoint(imgX, imgY) {
+            const hitThreshold = 35 / App.displayScale;
+            let closestKey = null;
+            let minDist = Infinity;
+
+            for (const [key, pt] of Object.entries(App.points)) {
+                if (pt.hidden) continue;
+                const d = dist2D(pt, { x: imgX, y: imgY });
+                if (d < hitThreshold && d < minDist) {
+                    minDist = d;
+                    closestKey = key;
+                }
+            }
+            return closestKey;
+        }
+
+        function onPointerDown(clientX, clientY) {
+            const coords = getCanvasCoords(clientX, clientY);
+
+            if (App.isReviewMode) {
+                // Em revisão, qualquer ponto pode ser selecionado
+                const foundKey = findClosestPoint(coords.x, coords.y);
+                if (foundKey) {
+                    App.activePointKey = foundKey;
+                    App.isDragging = true;
+                    updateStepUI();
+                    render();
+                    updateLoupe(App.points[foundKey].x, App.points[foundKey].y, clientX, clientY);
+                    updateZoomPanel();
+                }
+            } else {
+                // No modo passo a passo, só arrasta o ponto do passo atual
+                const currentKey = STEPS[App.currentStep].key;
+                const pt = App.points[currentKey];
+                const d = dist2D(pt, coords);
+                const threshold = 45 / App.displayScale;
+
+                if (d < threshold) {
+                    App.isDragging = true;
+                    render();
+                    updateLoupe(pt.x, pt.y, clientX, clientY);
+                } else {
+                    // Se tocar longe do ponto atual, reposicionar o ponto lá
+                    pt.x = Math.max(0, Math.min(App.imageWidth, coords.x));
+                    pt.y = Math.max(0, Math.min(App.imageHeight, coords.y));
+                    App.isDragging = true;
+                    render();
+                    updateLoupe(pt.x, pt.y, clientX, clientY);
+                    updateZoomPanel();
+                    updateLiveCalc();
+                }
+            }
+        }
+
+        function onPointerMove(clientX, clientY) {
+            if (!App.isDragging) return;
+
+            const key = getActiveKey();
+            if (!key) return;
+
+            const coords = getCanvasCoords(clientX, clientY);
+            const pt = App.points[key];
+            pt.x = Math.max(0, Math.min(App.imageWidth, coords.x));
+            pt.y = Math.max(0, Math.min(App.imageHeight, coords.y));
+
+            render();
+            updateLoupe(pt.x, pt.y, clientX, clientY);
+            updateZoomPanel();
+            updateLiveCalc();
+        }
+
+        function onPointerUp() {
+            if (App.isDragging) {
+                App.isDragging = false;
+                hideLoupe();
+                render();
+            }
+        }
+
+        // Touch
+        canvas.addEventListener('touchstart', (e) => {
+            const t = e.touches[0];
+            onPointerDown(t.clientX, t.clientY);
+            if (App.isDragging) e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!App.isDragging) return;
+            const t = e.touches[0];
+            onPointerMove(t.clientX, t.clientY);
+            e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener('touchend', onPointerUp);
+
+        // Mouse
+        canvas.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+        window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', onPointerUp);
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  D-PAD — NUDGE ±1px COM LONG-PRESS                */
+        /* ═══════════════════════════════════════════════════ */
+        let nudgeTimer = null;
+        let nudgeInterval = null;
+
+        function nudgePoint(dx, dy) {
+            const key = getActiveKey();
+            if (!key) return;
+            const pt = App.points[key];
+            pt.x = Math.max(0, Math.min(App.imageWidth, pt.x + dx));
+            pt.y = Math.max(0, Math.min(App.imageHeight, pt.y + dy));
+
+            render();
+            updateZoomPanel();
+            updateLiveCalc();
+
+            // Flash visual
+            const wrap = $('zoomCanvasWrap');
+            wrap.classList.remove('nudge-flash');
+            void wrap.offsetWidth; // reflow
+            wrap.classList.add('nudge-flash');
+        }
+
+        function startNudge(dx, dy) {
+            nudgePoint(dx, dy);
+            nudgeTimer = setTimeout(() => {
+                nudgeInterval = setInterval(() => nudgePoint(dx, dy), 80);
+            }, 400); // aguardar 400ms antes de iniciar repetição contínua
+        }
+
+        function stopNudge() {
+            clearTimeout(nudgeTimer);
+            clearInterval(nudgeInterval);
+            nudgeTimer = null;
+            nudgeInterval = null;
+        }
+
+        // Bind D-pad buttons (touch + mouse)
+        function bindDpad(id, dx, dy) {
+            const btn = $(id);
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); startNudge(dx, dy); });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); startNudge(dx, dy); }, { passive: false });
+            btn.addEventListener('mouseup', stopNudge);
+            btn.addEventListener('mouseleave', stopNudge);
+            btn.addEventListener('touchend', stopNudge);
+            btn.addEventListener('touchcancel', stopNudge);
+        }
+
+        bindDpad('dpadUp', 0, -1);
+        bindDpad('dpadDown', 0, 1);
+        bindDpad('dpadLeft', -1, 0);
+        bindDpad('dpadRight', 1, 0);
+
+        // Botão central do D-pad — reseta o zoom para 5x
+        $('dpadCenter').addEventListener('click', () => {
+            App.zoomLevel = 5;
+            $('zoomSlider').value = 5;
+            $('zoomLevelText').textContent = '5.0×';
+            updateZoomPanel();
+        });
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  KEYBOARD SUPPORT                                  */
+        /* ═══════════════════════════════════════════════════ */
+        document.addEventListener('keydown', (e) => {
+            if (App.screen !== 'editor') return;
+
+            switch (e.key) {
+                case 'ArrowUp': e.preventDefault(); nudgePoint(0, -1); break;
+                case 'ArrowDown': e.preventDefault(); nudgePoint(0, 1); break;
+                case 'ArrowLeft': e.preventDefault(); nudgePoint(-1, 0); break;
+                case 'ArrowRight': e.preventDefault(); nudgePoint(1, 0); break;
+                case 'Tab':
+                    e.preventDefault();
+                    if (e.shiftKey) prevStep(); else nextStep();
+                    break;
+                case '+': case '=':
+                    App.zoomLevel = Math.min(8, App.zoomLevel + 0.5);
+                    $('zoomSlider').value = App.zoomLevel;
+                    $('zoomLevelText').textContent = `${App.zoomLevel.toFixed(1)}×`;
+                    updateZoomPanel();
+                    break;
+                case '-':
+                    App.zoomLevel = Math.max(3, App.zoomLevel - 0.5);
+                    $('zoomSlider').value = App.zoomLevel;
+                    $('zoomLevelText').textContent = `${App.zoomLevel.toFixed(1)}×`;
+                    updateZoomPanel();
+                    break;
+                case 'Enter':
+                    nextStep();
+                    break;
+            }
+        });
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  CÁLCULOS DE MEDIÇÃO                               */
+        /* ═══════════════════════════════════════════════════ */
+        function calculateMetrics() {
+            const { cardTL, cardTR, cardBR, cardBL, pupilR, pupilL, noseBridge, zigoR, zigoL } = App.points;
+
+            // 1. PPM — Pixels por Milímetro (via dimensões do cartão)
+            const wTop = dist2D(cardTL, cardTR);
+            const wBottom = dist2D(cardBL, cardBR);
+            const hLeft = dist2D(cardTL, cardBL);
+            const hRight = dist2D(cardTR, cardBR);
+
+            // Usar a maior medida de cada dimensão (mais resiliente a perspectiva leve)
+            const maxW = Math.max(wTop, wBottom);
+            const maxH = Math.max(hLeft, hRight);
+
+            const ppmW = maxW / CARD_WIDTH_MM;
+            const ppmH = maxH / CARD_HEIGHT_MM;
+            if (ppmW <= 0 || ppmH <= 0) return null;
+
+            // Ponderar PPM — a dimensão que gera aspect ratio mais próximo do esperado é mais confiável
+            const measuredAspect = maxW / maxH;
+            const aspectError = Math.abs(measuredAspect - CARD_ASPECT) / CARD_ASPECT;
+
+            // Peso por dimensão: largura costuma ser mais confiável (cartão deitado)
+            const wWeight = 0.65;
+            const hWeight = 0.35;
+            const ppm = (ppmW * wWeight) + (ppmH * hWeight);
+
+            // 2. Distâncias Pupilares
+            const distPupilasPx = dist2D(pupilR, pupilL);
+            const distODPx = dist2D(pupilR, noseBridge);
+            const distOEPx = dist2D(pupilL, noseBridge);
+
+            const dpBinocular = (distPupilasPx / ppm) * DEPTH_CORRECTION;
+            const dpOD = (distODPx / ppm) * DEPTH_CORRECTION;
+            const dpOE = (distOEPx / ppm) * DEPTH_CORRECTION;
+
+            // 3. Largura do rosto
+            let faceWidthMM = 135;
+            if (zigoR.x && zigoL.x) {
+                const facePx = dist2D(zigoR, zigoL);
+                faceWidthMM = (facePx / ppm) * DEPTH_CORRECTION;
+            }
+
+            // 4. Pontuação de confiança
+            const confidence = computeConfidence(ppmW, ppmH, aspectError);
+
+            return {
+                ppm: Math.round(ppm * 100) / 100,
+                ppmW: Math.round(ppmW * 100) / 100,
+                ppmH: Math.round(ppmH * 100) / 100,
+                dpBinocular: Math.round(dpBinocular * 10) / 10,
+                dpOD: Math.round(dpOD * 10) / 10,
+                dpOE: Math.round(dpOE * 10) / 10,
+                faceWidth: Math.round(faceWidthMM * 10) / 10,
+                resolution: `${App.imageWidth}×${App.imageHeight}`,
+                aspectError: Math.round(aspectError * 1000) / 10, // em %
+                confidence,
+            };
+        }
+
+        function computeConfidence(ppmW, ppmH, aspectError) {
+            let score = 100;
+
+            // Penalizar por aspect ratio do cartão distante do esperado
+            // Cada 1% de erro = -5 pontos
+            score -= aspectError * 100 * 5;
+
+            // Penalizar por resolução muito baixa
+            const totalPixels = App.imageWidth * App.imageHeight;
+            if (totalPixels < 500_000) score -= 30;
+            else if (totalPixels < 1_000_000) score -= 15;
+            else if (totalPixels < 2_000_000) score -= 5;
+
+            // Penalizar se PPM é muito baixo (imagem muito distante)
+            const avgPPM = (ppmW + ppmH) / 2;
+            if (avgPPM < 5) score -= 20;
+            else if (avgPPM < 10) score -= 10;
+
+            // Verificar se as pupilas estão em posição razoável
+            const { pupilR, pupilL, noseBridge } = App.points;
+            const dpOD = dist2D(pupilR, noseBridge);
+            const dpOE = dist2D(pupilL, noseBridge);
+            const asymmetry = Math.abs(dpOD - dpOE) / Math.max(dpOD, dpOE);
+            if (asymmetry > 0.15) score -= 10; // pupilas muito assimétricas em relação ao nariz
+
+            return Math.max(0, Math.min(100, Math.round(score)));
+        }
+
+        function updateLiveCalc() {
+            const m = calculateMetrics();
+            if (m) {
+                $('liveDPText').textContent = `${m.dpBinocular.toFixed(1)} mm`;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  RESULTADOS                                        */
+        /* ═══════════════════════════════════════════════════ */
+        function finalizeResults() {
+            const m = calculateMetrics();
+            if (!m) {
+                showToast('Verifique se os pontos do cartão estão posicionados corretamente.');
+                return;
+            }
+
+            App.results = m;
+
+            // Salvar objeto temporário no mesmo formato dos outros métodos do sistema
+            window._medicaoResult = {
+                metodo: "Foto com Cartão de Referência",
+                dp_binocular: +m.dpBinocular.toFixed(1),
+                dp_esq: +m.dpOE.toFixed(1),
+                dp_dir: +m.dpOD.toFixed(1),
+                timestamp: new Date().toISOString(),
+            };
+
+            // Preencher valores pós-medição (exatamente as mesmas informações exibidas atualmente)
+            const elDPBino = $('modal_dp_bino');
+            const elDPEsq = $('modal_dp_esq');
+            const elDPDir = $('modal_dp_dir');
+
+            if (elDPBino) elDPBino.textContent = `${m.dpBinocular.toFixed(1)} mm`;
+            if (elDPEsq) elDPEsq.textContent = `${m.dpOE.toFixed(1)} mm`;
+            if (elDPDir) elDPDir.textContent = `${m.dpOD.toFixed(1)} mm`;
+
+            renderManualComparison(m.dpBinocular);
+
+            showScreen('result');
+        }
+
+        /* =================================================== */
+        /*  GUIA MANUAL E COMPARAÇÃO COM MEDIÇÃO MANUAL        */
+        /* =================================================== */
+        function toggleManualGuide() {
+            const body = $('manualAccordionBody');
+            const chevron = $('manualAccChevron');
+            if (!body) return;
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'block' : 'none';
+            if (chevron) {
+                chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        function salvarManualDPStart() {
+            const input = $('inputManualDPStart');
+            if (input && input.value) {
+                const val = parseFloat(input.value);
+                if (val >= 40 && val <= 85) {
+                    localStorage.setItem('manual_dp_comparison', val.toFixed(1));
+                    showToast(`DP Manual de ${val.toFixed(1)} mm salva para comparação!`, 'success');
+                } else {
+                    showToast('Informe um valor de DP válido (entre 40 e 85 mm).', 'error');
+                }
+            }
+        }
+
+        function renderManualComparison(sysDP) {
+            const box = $('resultManualCompBox');
+            if (!box) return;
+            box.style.display = 'block';
+
+            const saved = localStorage.getItem('manual_dp_comparison');
+            if (saved && !isNaN(parseFloat(saved))) {
+                const manualDP = parseFloat(saved);
+                const diff = +(Math.abs(sysDP - manualDP)).toFixed(1);
+
+                let badgeClass = 'badge-good';
+                let badgeIcon = 'check_circle';
+                let badgeMsg = `Excelente concordância! Diferença de apenas ${diff} mm (dentro da margem ideal para confecção das lentes).`;
+
+                if (diff > 1.5 && diff <= 3.0) {
+                    badgeClass = 'badge-notice';
+                    badgeIcon = 'info';
+                    badgeMsg = `Boa concordância (${diff} mm de diferença). Variação comum decorrente da convergência ocular na régua manual.`;
+                } else if (diff > 3.0) {
+                    badgeClass = 'badge-warn';
+                    badgeIcon = 'warning';
+                    badgeMsg = `Diferença de ${diff} mm observada. Sugerimos revisar os pontos no editor ou checar a marcação na régua.`;
+                }
+
+                box.innerHTML = `
+                    <div class="result-comparison-header">
+                        <span class="material-icons" style="font-size:1.1rem; color:var(--verde-cadastro);">balance</span>
+                        <span>Comparação com Medição Manual</span>
+                    </div>
+                    <div class="result-comparison-grid">
+                        <div class="result-comp-item">
+                            <span class="result-comp-label">Sistema Digital</span>
+                            <span class="result-comp-val">${sysDP.toFixed(1)} mm</span>
+                        </div>
+                        <div class="result-comp-item">
+                            <span class="result-comp-label">Sua Medição Manual</span>
+                            <span class="result-comp-val">${manualDP.toFixed(1)} mm</span>
+                        </div>
+                    </div>
+                    <div class="result-comp-diff-badge ${badgeClass}">
+                        <span class="material-icons" style="font-size:1rem; flex-shrink:0;">${badgeIcon}</span>
+                        <span>${badgeMsg}</span>
+                    </div>
+                    <div style="margin-top:8px; text-align:right;">
+                        <button type="button" onclick="alterarDPManualResult(${sysDP})" style="background:none; border:none; color:var(--cinza-light); font-size:0.75rem; cursor:pointer; text-decoration:underline; font-family:'Montserrat',sans-serif;">Alterar valor manual</button>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `
+                    <div class="result-comparison-header">
+                        <span class="material-icons" style="font-size:1.05rem; color:var(--azul-claro);">straighten</span>
+                        <span>Comparar com Medição Manual</span>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--cinza-escuro); margin-bottom:6px;">
+                        Mediu sua DP manualmente com uma régua? Digite para comparar:
+                    </p>
+                    <div class="result-comp-inline-form">
+                        <input type="number" id="inputManualDPResult" class="result-comp-inline-input" placeholder="63" min="40" max="85" step="0.5">
+                        <span style="font-size:0.78rem; font-weight:600; color:var(--cinza-light);">mm</span>
+                        <button type="button" class="result-comp-inline-btn" onclick="aplicarManualDPResult(${sysDP})">Comparar</button>
+                    </div>
+                `;
+            }
+        }
+
+        function aplicarManualDPResult(sysDP) {
+            const input = $('inputManualDPResult');
+            if (input && input.value) {
+                const val = parseFloat(input.value);
+                if (val >= 40 && val <= 85) {
+                    localStorage.setItem('manual_dp_comparison', val.toFixed(1));
+                    renderManualComparison(sysDP);
+                } else {
+                    showToast('Informe um valor de DP válido (entre 40 e 85 mm).', 'error');
+                }
+            }
+        }
+
+        function alterarDPManualResult(sysDP) {
+            localStorage.removeItem('manual_dp_comparison');
+            renderManualComparison(sysDP);
+        }
+
+        /* =================================================== */
+        /*  ACOES DA TELA DE RESULTADO                        */
+        /* =================================================== */
+        const elModalConfirm = $('modalConfirm');
+        if (elModalConfirm) {
+            elModalConfirm.addEventListener('click', () => {
+                if (window._medicaoResult) {
+                    localStorage.setItem('otica_medicao', JSON.stringify(window._medicaoResult));
+                }
+                window.location.href = 'index.html';
+            });
+        }
+
+        const elModalCancel = $('modalCancel');
+        if (elModalCancel) {
+            elModalCancel.addEventListener('click', () => {
+                localStorage.removeItem('otica_medicao');
+                window.location.href = 'index.html';
+            });
+        }
+
+        const elBtnRetouch = $('btnRetouch');
+        if (elBtnRetouch) {
+            elBtnRetouch.addEventListener('click', () => {
+                enterReviewMode();
+                showScreen('editor');
+                setupCanvas();
+                render();
+                updateZoomPanel();
+            });
+        }
+        /* ═══════════════════════════════════════════════════ */
+        /*  ÁUDIO SINTETIZADO (Web Audio API)                 */
+        /* ═══════════════════════════════════════════════════ */
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playBeep(freq = 600, duration = 0.12) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.18, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                console.warn('Audio beep error:', e);
+            }
+        }
+
+        function playShutterSound() {
+            try {
+                playBeep(900, 0.05);
+                setTimeout(() => playBeep(1450, 0.08), 60);
+            } catch (e) { }
+        }
+
+        /* ═══════════════════════════════════════════════════ */
+        /*  CONTROLADOR DA CÂMERA GUIADA COM AUTO-DISPARO     */
+        /* ═══════════════════════════════════════════════════ */
+        const GuidedCamera = {
+            stream: null,
+            video: $('guidedVideo'),
+            canvas: $('guidedOverlayCanvas'),
+            ctx: null,
+            facingMode: 'user', // 'user' ou 'environment'
+            isMirrored: true, // Modo selfie ativado por padrão
+            zoom2x: false,
+            hwZoomActive: false,
+            autoCaptureEnabled: true,
+            isDetecting: false,
+            animFrameId: null,
+            lastAnalysisTime: 0,
+            analysisIntervalMs: 85, // ~12 fps para IA
+            offscreenCanvas: null,
+            offscreenCtx: null,
+
+            // Estado de avaliação
+            countdownActive: false,
+            countdownValue: 3,
+            countdownTimer: null,
+            stableCount: 0,
+            lastFacePos: null,
+            conditions: {
+                distance: false,
+                tilt: false,
+                stability: false,
+                centered: false
+            },
+            statusText: 'Iniciando câmera...',
+            statusClass: '',
+
+            init() {
+                this.ctx = this.canvas.getContext('2d');
+                this.offscreenCanvas = document.createElement('canvas');
+                this.offscreenCanvas.width = 360;
+                this.offscreenCanvas.height = 270;
+                this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+
+                const savedMirror = localStorage.getItem('optiface_guided_mirror');
+                if (savedMirror !== null) {
+                    this.isMirrored = savedMirror === '1';
+                }
+
+                $('btnStartGuidedCamera').addEventListener('click', () => this.start());
+                $('btnGuidedBack').addEventListener('click', () => this.stopAndReturn());
+                $('btnToggleMirror').addEventListener('click', () => this.toggleMirror());
+                $('btnSwitchCamera').addEventListener('click', () => this.switchCamera());
+                $('btnToggleZoom').addEventListener('click', () => this.toggleZoom());
+                $('btnToggleAutoCapture').addEventListener('click', () => this.toggleAutoCapture());
+                $('btnManualCapture').addEventListener('click', () => this.capture('manual'));
+            },
+
+            async start() {
+                if (!navigator.mediaDevices?.getUserMedia) {
+                    showToast('Câmera não suportada neste navegador.');
+                    return;
+                }
+
+                showLoading('Iniciando câmera guiada...');
+                try {
+                    // Parar stream anterior se existir
+                    this.stopStream();
+
+                    const constraints = {
+                        audio: false,
+                        video: {
+                            facingMode: this.facingMode,
+                            width: { ideal: 1920, min: 1280 },
+                            height: { ideal: 1080, min: 720 },
+                        }
+                    };
+
+                    this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    this.video.srcObject = this.stream;
+
+                    await new Promise((resolve) => {
+                        this.video.onloadedmetadata = () => {
+                            this.video.play().then(resolve);
+                        };
+                    });
+
+                    // Tentar zoom se ativo
+                    if (this.zoom2x) {
+                        await this.applyHardwareZoom(true);
+                    }
+
+                    showScreen('guidedCamera');
+                    hideLoading();
+
+                    this.isDetecting = true;
+                    this.stableCount = 0;
+                    this.cancelCountdown();
+                    this.resizeCanvas();
+                    this.updateVideoTransform();
+                    this.runLoop();
+
+                    showToast('Posicione o rosto dentro da moldura oval com o cartão na testa.');
+                } catch (err) {
+                    hideLoading();
+                    console.error('Erro ao abrir câmera:', err);
+                    showToast('Não foi possível acessar a câmera. Verifique as permissões.');
+                }
+            },
+
+            stopStream() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(t => t.stop());
+                    this.stream = null;
+                }
+                if (this.video) {
+                    this.video.srcObject = null;
+                }
+            },
+
+            stopAndReturn() {
+                this.isDetecting = false;
+                if (this.animFrameId) {
+                    cancelAnimationFrame(this.animFrameId);
+                    this.animFrameId = null;
+                }
+                this.cancelCountdown();
+                this.stopStream();
+                showScreen('start');
+            },
+
+            async switchCamera() {
+                this.facingMode = (this.facingMode === 'user') ? 'environment' : 'user';
+                this.isMirrored = (this.facingMode === 'user');
+                await this.start();
+            },
+
+            updateVideoTransform() {
+                const parts = [];
+                if (this.isMirrored) {
+                    parts.push('scaleX(-1)');
+                }
+                if (this.zoom2x && !this.hwZoomActive) {
+                    parts.push('scale(1.65)');
+                }
+                this.video.style.transform = parts.join(' ');
+
+                const btnMirror = $('btnToggleMirror');
+                if (btnMirror) {
+                    btnMirror.classList.toggle('active', this.isMirrored);
+                    btnMirror.title = this.isMirrored
+                        ? 'Câmera espelhada (modo selfie) — clique para inverter'
+                        : 'Câmera direta — clique para espelhar';
+                }
+            },
+
+            toggleMirror() {
+                this.isMirrored = !this.isMirrored;
+                localStorage.setItem('optiface_guided_mirror', this.isMirrored ? '1' : '0');
+                this.updateVideoTransform();
+                showToast(this.isMirrored ? '🪞 Câmera espelhada (modo selfie)' : '📷 Câmera direta (sem espelhamento)');
+            },
+
+            async toggleZoom() {
+                this.zoom2x = !this.zoom2x;
+                const btn = $('btnToggleZoom');
+                if (this.zoom2x) {
+                    btn.textContent = '2x';
+                    btn.classList.add('active');
+                } else {
+                    btn.textContent = '1x';
+                    btn.classList.remove('active');
+                }
+
+                this.hwZoomActive = await this.applyHardwareZoom(this.zoom2x);
+                this.updateVideoTransform();
+            },
+
+            async applyHardwareZoom(enable) {
+                const track = this.stream?.getVideoTracks()[0];
+                const caps = track?.getCapabilities?.();
+                if (caps && 'zoom' in caps) {
+                    const targetZoom = enable ? Math.min(2.0, caps.zoom.max) : 1.0;
+                    try {
+                        await track.applyConstraints({ advanced: [{ zoom: targetZoom }] });
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+                return false;
+            },
+
+            toggleAutoCapture() {
+                this.autoCaptureEnabled = !this.autoCaptureEnabled;
+                $('autoCaptureLabel').textContent = this.autoCaptureEnabled ? 'Auto-Disparo: ON' : 'Auto-Disparo: OFF';
+                $('autoCaptureIcon').textContent = this.autoCaptureEnabled ? '⚡' : '⏸️';
+                if (!this.autoCaptureEnabled) {
+                    this.cancelCountdown();
+                }
+            },
+
+            resizeCanvas() {
+                const rect = this.video.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = rect.height * dpr;
+                this.ctx.resetTransform?.();
+                this.ctx.scale(dpr, dpr);
+            },
+
+            runLoop() {
+                if (!this.isDetecting) return;
+
+                const now = performance.now();
+                if (now - this.lastAnalysisTime > this.analysisIntervalMs) {
+                    this.lastAnalysisTime = now;
+                    this.analyzeFrame();
+                }
+
+                this.renderOverlay();
+                this.animFrameId = requestAnimationFrame(() => this.runLoop());
+            },
+
+            analyzeFrame() {
+                if (this.video.readyState < 2 || !App.faceLandmarker) return;
+
+                try {
+                    // Desenha no canvas offscreen menor para alta performance
+                    this.offscreenCtx.drawImage(this.video, 0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+                    const result = App.faceLandmarker.detect(this.offscreenCanvas);
+
+                    if (result?.faceLandmarks?.length) {
+                        const lm = result.faceLandmarks[0];
+                        this.evaluateLandmarks(lm, result);
+                    } else {
+                        this.conditions = { distance: false, tilt: false, stability: false, centered: false };
+                        this.stableCount = 0;
+                        this.statusText = 'Posicione o rosto dentro da moldura';
+                        this.statusClass = '';
+                        this.cancelCountdown();
+                        this.updateChecklistUI();
+                    }
+                } catch (e) {
+                    console.warn('Erro na análise da câmera guiada:', e);
+                }
+            },
+
+            evaluateLandmarks(lm, result) {
+                // Pontos chave
+                const topHead = lm[10];
+                const chin = lm[152];
+                const noseBridge = lm[168];
+                const noseTip = lm[1];
+                const rightIris = lm[468];
+                const leftIris = lm[473];
+                const rightCheek = lm[234];
+                const leftCheek = lm[454];
+
+                // 1. Distância / Escala
+                // Altura da face normalizada
+                let faceHeightRatio = (chin.y - topHead.y);
+                // Se o zoom digital estiver ativo, compensar a escala
+                if (this.zoom2x && !this.hwZoomActive) {
+                    faceHeightRatio *= 1.65;
+                }
+
+                let distanceOk = false;
+                let distanceMsg = '';
+                if (faceHeightRatio < 0.38) {
+                    distanceMsg = 'Aproxime-se um pouco (ou use o Zoom 2x)';
+                } else if (faceHeightRatio > 0.64) {
+                    distanceMsg = 'Afaste-se um pouco da câmera';
+                } else {
+                    distanceOk = true;
+                }
+
+                // 2. Nivelamento e Inclinação (Head Pose 3D)
+                let tiltOk = true;
+                let tiltMsg = '';
+
+                // Extração de ângulos em graus (Roll, Yaw, Pitch)
+                let pitchDeg = 0;
+                let yawDeg = 0;
+                let rollDeg = 0;
+                let hasMatrix = false;
+
+                if (result?.facialTransformationMatrixes?.[0]?.data) {
+                    const m = result.facialTransformationMatrixes[0].data;
+                    const R20 = m[8], R21 = m[9], R22 = m[10];
+                    const R10 = m[4], R00 = m[0];
+                    pitchDeg = Math.asin(Math.max(-1, Math.min(1, -R20))) * (180 / Math.PI);
+                    yawDeg = Math.atan2(R10, R00) * (180 / Math.PI);
+                    rollDeg = Math.atan2(R21, R22) * (180 / Math.PI);
+                    hasMatrix = true;
+                }
+
+                // Estimativas baseadas em profundidade Z e geometria facial (fallback e validação)
+                const zFore = topHead.z;
+                const zChin = chin.z;
+                const pitchFromZ = Math.atan2(zFore - zChin, 0.12) * (180 / Math.PI);
+
+                const zEyeR = lm[33]?.z ?? rightIris.z;
+                const zEyeL = lm[263]?.z ?? leftIris.z;
+                const yawFromZ = Math.atan2(zEyeR - zEyeL, 0.08) * (180 / Math.PI);
+
+                const eyeDist = Math.hypot(leftIris.x - rightIris.x, leftIris.y - rightIris.y);
+                const rollFrom2D = Math.asin(Math.max(-1, Math.min(1, (leftIris.y - rightIris.y) / Math.max(0.01, eyeDist)))) * (180 / Math.PI);
+
+                const dLeft = Math.abs(noseTip.x - rightCheek.x);
+                const dRight = Math.abs(leftCheek.x - noseTip.x);
+                const yawAsym = (dLeft - dRight) / Math.max(0.01, (dLeft + dRight));
+
+                if (!hasMatrix) {
+                    pitchDeg = pitchFromZ;
+                    yawDeg = yawFromZ;
+                    rollDeg = rollFrom2D;
+                }
+
+                // Avaliação dos limites:
+                // Roll (inclinação lateral da cabeça)
+                if (Math.abs(rollDeg) > 7.5) {
+                    tiltOk = false;
+                    tiltMsg = 'Mantenha a cabeça reta (não incline para os lados)';
+                }
+                // Yaw (rotação horizontal esquerda/direita)
+                else if (Math.abs(yawDeg) > 9 || Math.abs(yawAsym) > 0.25) {
+                    tiltOk = false;
+                    tiltMsg = 'Olhe diretamente para a frente';
+                }
+                // Pitch (queixo para cima ou para baixo)
+                // pitch > 0: queixo levantado -> abaixar ligeiramente o queixo
+                // pitch < 0: queixo abaixado -> levantar um pouco o queixo
+                else if (pitchDeg > 8.0) {
+                    tiltOk = false;
+                    tiltMsg = 'Abaixe ligeiramente o queixo';
+                } else if (pitchDeg < -8.0) {
+                    tiltOk = false;
+                    tiltMsg = 'Levante um pouco o queixo';
+                }
+
+                // 3. Centralização na moldura oval
+                const centeredOk = Math.abs(noseBridge.x - 0.5) < 0.18;
+                if (!centeredOk && tiltOk && distanceOk) {
+                    tiltMsg = 'Centralize seu rosto na moldura';
+                }
+
+                // 4. Estabilidade
+                let stabilityOk = false;
+                if (this.lastFacePos) {
+                    const movement = Math.hypot(noseBridge.x - this.lastFacePos.x, noseBridge.y - this.lastFacePos.y);
+                    if (movement < 0.014) {
+                        this.stableCount++;
+                    } else {
+                        this.stableCount = Math.max(0, this.stableCount - 2);
+                    }
+                }
+                this.lastFacePos = { x: noseBridge.x, y: noseBridge.y };
+                stabilityOk = this.stableCount >= 4;
+
+                this.conditions = {
+                    distance: distanceOk,
+                    tilt: tiltOk,
+                    stability: stabilityOk,
+                    centered: centeredOk
+                };
+
+                // Atualizar mensagens e auto-disparo
+                const allOk = distanceOk && tiltOk && centeredOk && stabilityOk;
+                if (allOk) {
+                    this.statusText = '✨ Perfeito! Não se mova...';
+                    this.statusClass = 'status-ready';
+                    if (this.autoCaptureEnabled && !this.countdownActive) {
+                        this.startCountdown();
+                    }
+                } else {
+                    if (this.countdownActive) {
+                        this.cancelCountdown();
+                    }
+                    this.statusClass = 'status-warn';
+                    if (!distanceOk) this.statusText = distanceMsg;
+                    else if (!tiltOk || !centeredOk) this.statusText = tiltMsg;
+                    else if (!stabilityOk) this.statusText = 'Fique parado para estabilizar...';
+                }
+
+                this.updateChecklistUI();
+            },
+
+            updateChecklistUI() {
+                $('chkDistance').classList.toggle('ok', this.conditions.distance);
+                $('chkTilt').classList.toggle('ok', this.conditions.tilt);
+                $('chkStability').classList.toggle('ok', this.conditions.stability);
+
+                const badge = $('guidedStatusBadge');
+                badge.className = `guided-status-badge ${this.statusClass}`;
+                $('guidedStatusText').textContent = this.statusText;
+                $('guidedStatusIcon').textContent = (this.statusClass === 'status-ready') ? '✓' : (this.statusClass === 'status-warn' ? '⚠️' : '📏');
+            },
+
+            startCountdown() {
+                this.countdownActive = true;
+                this.countdownValue = 3;
+                $('countdownNumber').textContent = this.countdownValue;
+                $('guidedCountdownOverlay').classList.add('active');
+                playBeep(520, 0.12);
+
+                this.countdownTimer = setInterval(() => {
+                    this.countdownValue--;
+                    if (this.countdownValue > 0) {
+                        $('countdownNumber').textContent = this.countdownValue;
+                        playBeep(this.countdownValue === 2 ? 650 : 880, 0.12);
+                    } else {
+                        clearInterval(this.countdownTimer);
+                        this.countdownTimer = null;
+                        this.capture('auto');
+                    }
+                }, 900);
+            },
+
+            cancelCountdown() {
+                this.countdownActive = false;
+                if (this.countdownTimer) {
+                    clearInterval(this.countdownTimer);
+                    this.countdownTimer = null;
+                }
+                $('guidedCountdownOverlay').classList.remove('active');
+            },
+
+            renderOverlay() {
+                const rect = this.video.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) return;
+
+                const w = rect.width;
+                const h = rect.height;
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, w, h);
+
+                const allOk = this.conditions.distance && this.conditions.tilt && this.conditions.stability && this.conditions.centered;
+                const almostOk = (Number(this.conditions.distance) + Number(this.conditions.tilt) + Number(this.conditions.stability) + Number(this.conditions.centered)) >= 3;
+
+                const primaryColor = allOk ? '#10b981' : (almostOk ? '#f59e0b' : 'rgba(129, 140, 248, 0.7)');
+                const glowColor = allOk ? 'rgba(16, 185, 129, 0.5)' : (almostOk ? 'rgba(245, 158, 11, 0.35)' : 'rgba(129, 140, 248, 0.25)');
+
+                // Dimensões da moldura oval facial
+                const ovalCX = w * 0.5;
+                const ovalCY = h * 0.50;
+                const ovalRX = w * 0.28;
+                const ovalRY = h * 0.28;
+
+                // Desenha máscara sutil externa
+                ctx.save();
+                ctx.fillStyle = 'rgba(6, 6, 26, 0.35)';
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.ellipse(ovalCX, ovalCY, ovalRX, ovalRY, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Desenha contorno oval da face
+                ctx.save();
+                ctx.strokeStyle = primaryColor;
+                ctx.lineWidth = allOk ? 3.5 : 2;
+                ctx.shadowColor = glowColor;
+                ctx.shadowBlur = allOk ? 16 : 8;
+                ctx.beginPath();
+                ctx.ellipse(ovalCX, ovalCY, ovalRX, ovalRY, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Retângulo guia do cartão (na testa, parte superior do oval)
+                const cardW = ovalRX * 1.35;
+                const cardH = cardW / CARD_ASPECT;
+                const cardX = ovalCX - (cardW / 2);
+                const cardY = ovalCY - (ovalRY * 0.78);
+
+                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = primaryColor;
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(cardX, cardY, cardW, cardH, 8);
+                else ctx.rect(cardX, cardY, cardW, cardH);
+                ctx.stroke();
+
+                // Texto informativo do cartão
+                ctx.setLineDash([]);
+                ctx.font = '700 9px Inter, sans-serif';
+                ctx.fillStyle = primaryColor;
+                ctx.textAlign = 'center';
+                ctx.fillText('💳 CARTÃO NA TESTA', ovalCX, cardY - 6);
+
+                // Linha de nível dos olhos (guia suave)
+                const eyeY = ovalCY - (ovalRY * 0.12);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 5]);
+                ctx.beginPath();
+                ctx.moveTo(ovalCX - ovalRX * 0.7, eyeY);
+                ctx.lineTo(ovalCX + ovalRX * 0.7, eyeY);
+                ctx.stroke();
+
+                ctx.restore();
+            },
+
+            capture(source = 'manual') {
+                if (this.video.readyState < 2) return;
+
+                this.cancelCountdown();
+
+                // Flash visual
+                const flash = $('guidedFlash');
+                flash.classList.add('active');
+                setTimeout(() => flash.classList.remove('active'), 180);
+
+                // Som de obturador
+                playShutterSound();
+
+                // Resolução nativa do sensor
+                const nativeW = this.video.videoWidth || 1920;
+                const nativeH = this.video.videoHeight || 1080;
+
+                const capCanvas = document.createElement('canvas');
+                const capCtx = capCanvas.getContext('2d');
+                capCanvas.width = nativeW;
+                capCanvas.height = nativeH;
+
+                capCtx.save();
+                if (this.isMirrored) {
+                    capCtx.translate(nativeW, 0);
+                    capCtx.scale(-1, 1);
+                }
+
+                // Se houver zoom digital 2x ativo (sem suporte de hardware)
+                if (this.zoom2x && !this.hwZoomActive) {
+                    const cropW = nativeW / 1.65;
+                    const cropH = nativeH / 1.65;
+                    const cropX = (nativeW - cropW) / 2;
+                    const cropY = (nativeH - cropH) / 2;
+                    capCtx.drawImage(this.video, cropX, cropY, cropW, cropH, 0, 0, nativeW, nativeH);
+                } else {
+                    capCtx.drawImage(this.video, 0, 0, nativeW, nativeH);
+                }
+                capCtx.restore();
+
+                const dataUrl = capCanvas.toDataURL('image/jpeg', 0.95);
+
+                // Parar câmera
+                this.isDetecting = false;
+                if (this.animFrameId) {
+                    cancelAnimationFrame(this.animFrameId);
+                    this.animFrameId = null;
+                }
+                this.stopStream();
+
+                // Carregar na aplicação
+                showLoading('Carregando foto de alta precisão...');
+                const img = new Image();
+                img.onload = () => {
+                    App.loadedImage = img;
+                    App.imageWidth = img.naturalWidth || img.width;
+                    App.imageHeight = img.naturalHeight || img.height;
+                    processLoadedPhoto();
+                };
+                img.src = dataUrl;
+            }
+        };
+
+        // Inicializar controlador da câmera guiada
+        GuidedCamera.init();
+
+        // Inicializar cabeçalho da loja (autenticação e carrinho)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof updateHeader === 'function') {
+                updateHeader();
+            }
+
+            const savedManual = localStorage.getItem('manual_dp_comparison');
+            const inputStart = $('inputManualDPStart');
+            if (savedManual && inputStart) {
+                inputStart.value = savedManual;
+            }
+        });
+    </script>
+</body>
+
+</html>

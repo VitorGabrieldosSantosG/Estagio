@@ -58,62 +58,257 @@
             <div class="medicao-select-page">
                 <p class="page-subtitle">
                     Antes de escolher sua armação, meça sua Distância Pupilar (DP). 
-                    Selecione o método que melhor se adequa ao seu momento:
+                    Utilize a medição digital por foto com alta precisão, ou siga o guia abaixo para realizar uma medição manual com régua para comparar e conferir o resultado.
                 </p>
 
-                <div class="method-cards">
-                    <!-- Sem Régua -->
-                    <a href="medicao-auto.html" class="method-card" id="cardSemRegua">
+                <div class="method-cards" style="max-width:440px;">
+                    <!-- Medição por Foto -->
+                    <a href="foto.html" class="method-card" id="cardFoto">
                         <div class="method-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
                                 <circle cx="12" cy="12" r="3"/>
+                                <path d="M8.5 5V3.5a1 1 0 011-1h5a1 1 0 011 1V5"/>
                             </svg>
                         </div>
-                        <span class="method-badge badge-rapida">Rápida</span>
-                        <h3>Sem Régua</h3>
+                        <span class="method-badge badge-precisao">Método Oficial — Alta Precisão</span>
+                        <h3>Medição Digital por Foto</h3>
                         <p>
-                            Medição automática usando a câmera do seu dispositivo. 
-                            Basta posicionar o rosto e seguir as instruções na tela.
+                            Tire uma foto segurando um cartão bancário na testa 
+                            e ajuste os pontos com precisão sub-pixel guiada passo a passo.
                         </p>
                         <div class="method-cta">
                             <span class="material-icons" style="font-size:1.1rem;">photo_camera</span>
-                            Iniciar Medição
-                        </div>
-                    </a>
-
-                    <!-- Com Régua -->
-                    <a href="medicao-regua.html" class="method-card" id="cardComRegua">
-                        <div class="method-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="1" y="6" width="22" height="12" rx="2"/>
-                                <line x1="5" y1="6" x2="5" y2="10"/>
-                                <line x1="9" y1="6" x2="9" y2="12"/>
-                                <line x1="13" y1="6" x2="13" y2="10"/>
-                                <line x1="17" y1="6" x2="17" y2="12"/>
-                                <line x1="21" y1="6" x2="21" y2="10"/>
-                            </svg>
-                        </div>
-                        <span class="method-badge badge-precisao">Maior Precisão</span>
-                        <h3>Com Régua</h3>
-                        <p>
-                            Utilize uma régua comum para calibrar a medição. 
-                            Oferece maior precisão no resultado final.
-                        </p>
-                        <div class="method-cta">
-                            <span class="material-icons" style="font-size:1.1rem;">straighten</span>
-                            Iniciar Calibração
+                            Iniciar Medição Digital
                         </div>
                     </a>
                 </div>
+
+                <!-- SEÇÃO: GUIA DE MEDIÇÃO MANUAL PARA COMPARAÇÃO -->
+                <section class="manual-guide-section animate-fade" id="guiaMedicaoManual">
+                    <div class="manual-guide-header">
+                        <div class="manual-guide-icon-badge">
+                            <span class="material-icons" style="font-size:1.8rem;">straighten</span>
+                        </div>
+                        <div class="manual-guide-title-box">
+                            <h2>Quer comparar? Como realizar a Medição Manual com Régua</h2>
+                            <p>
+                                A Distância Pupilar (DP) e a Distância Naso-Pupilar (DNP) também podem ser medidas manualmente em casa com uma régua milimétrica comum. Você pode usar essa medição para comparar com o resultado gerado pelo nosso sistema digital.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Seletor de Métodos -->
+                    <div class="manual-method-tabs" role="tablist">
+                        <button type="button" class="manual-tab-btn active" id="tabBtnEspelho" onclick="switchManualTab('espelho')">
+                            <span class="material-icons" style="font-size:1.1rem;">filter_frames</span>
+                            Método 1: No Espelho (Automedidor)
+                        </button>
+                        <button type="button" class="manual-tab-btn" id="tabBtnAjudante" onclick="switchManualTab('ajudante')">
+                            <span class="material-icons" style="font-size:1.1rem;">people</span>
+                            Método 2: Com Auxílio de Outra Pessoa
+                        </button>
+                    </div>
+
+                    <!-- Conteúdo: Método 1 (Espelho) -->
+                    <div class="manual-tab-content active" id="contentEspelho">
+                        <div class="manual-steps-grid">
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">1</div>
+                                <div class="manual-step-body">
+                                    <h4>Posicionamento e Iluminação</h4>
+                                    <p>Fique em frente a um espelho bem iluminado, a uma distância de cerca de <strong>20 a 30 cm</strong>. Mantenha a cabeça reta e nivelada, olhando para frente.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">2</div>
+                                <div class="manual-step-body">
+                                    <h4>Apoio da Régua Milimétrica</h4>
+                                    <p>Apoie uma régua milimétrica comum (de preferência rígida ou transparente) horizontalmente sobre a ponte do nariz, encostada no rosto logo abaixo ou na linha dos olhos.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">3</div>
+                                <div class="manual-step-body">
+                                    <h4>Alinhamento do Marco Zero (Olho Esquerdo)</h4>
+                                    <p>Feche o olho direito. Olhando diretamente para a sua pupila esquerda no espelho, alinhe o marco do <strong>zero (0 mm)</strong> exatamente no centro negro da pupila esquerda.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">4</div>
+                                <div class="manual-step-body">
+                                    <h4>Leitura da DP Total (Olho Direito)</h4>
+                                    <p>Sem mover a régua nem a cabeça, abra o olho direito e feche o esquerdo. Olhe reto e leia a marcação em milímetros correspondente ao centro da sua pupila direita. Este valor é a sua <strong>Distância Pupilar (DP Binocular)</strong> total.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">5</div>
+                                <div class="manual-step-body">
+                                    <h4>Aferição da DNP (Naso-Pupilar de cada olho)</h4>
+                                    <p>Observe a marcação da régua no centro exato da ponte do seu nariz. A distância do nariz até cada pupila corresponde à <strong>DNP Direita</strong> e <strong>DNP Esquerda</strong> (normalmente entre 28 mm e 34 mm cada).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo: Método 2 (Ajudante) -->
+                    <div class="manual-tab-content" id="contentAjudante">
+                        <div class="manual-steps-grid">
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">1</div>
+                                <div class="manual-step-body">
+                                    <h4>Sentar-se Frente a Frente</h4>
+                                    <p>Sente-se de frente para a outra pessoa na mesma altura dos olhos, a uma distância confortável de aproximadamente <strong>40 a 50 cm</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">2</div>
+                                <div class="manual-step-body">
+                                    <h4>Olhar para o Infinito (Evitar Convergência)</h4>
+                                    <p>Mantenha o olhar relaxado fixo em um ponto distante (acima da cabeça do ajudante ou numa parede). <em>Importante: não olhe para a régua nem para o rosto do ajudante</em>, para evitar que seus olhos convirjam para perto.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">3</div>
+                                <div class="manual-step-body">
+                                    <h4>Apoio e Leitura pelo Ajudante</h4>
+                                    <p>O ajudante apoia a régua na ponte do seu nariz, posiciona o marco <strong>0 mm</strong> no centro da pupila do seu olho direito e lê a medição milimétrica no centro da pupila do olho esquerdo.</p>
+                                </div>
+                            </div>
+                            <div class="manual-step-card">
+                                <div class="manual-step-num">4</div>
+                                <div class="manual-step-body">
+                                    <h4>Leitura da DNP</h4>
+                                    <p>O ajudante também verifica a marcação que coincide com a linha média do nariz para registrar a DNP de cada olho individualmente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações de Comparação e Tolerância -->
+                    <div class="manual-comparison-callout">
+                        <span class="material-icons callout-icon">info</span>
+                        <div>
+                            <h4>Como interpretar e comparar sua medição manual com o sistema:</h4>
+                            <p>
+                                • <strong>Alta Precisão do Sistema:</strong> Nosso sistema utiliza visão computacional com calibração sub-pixel baseada nas dimensões exatas de um cartão padrão ISO (85.60 mm), eliminando erros humanos de paralaxe e ângulo da régua.
+                            </p>
+                            <p>
+                                • <strong>Variação Esperada (±1 a 2 mm):</strong> É natural haver uma pequena diferença de 1 mm a 2 mm entre a medição manual na régua e o sistema digital. Isso ocorre principalmente porque a medição em espelho ou régua de perto induz uma leve convergência ocular fisiológica (DP para perto vs DP para longe).
+                            </p>
+                            <p>
+                                • <strong>Dupla Confirmação:</strong> Anotar sua medição manual permite validar o resultado digital na tela de conclusão, oferecendo total tranquilidade e precisão para a confecção das lentes dos seus óculos.
+                            </p>
+                            <div class="manual-tags-row">
+                                <span class="manual-tag">
+                                    <span class="material-icons" style="font-size:0.9rem; color:var(--verde-cadastro);">check_circle</span>
+                                    DP Normal Adulto: 58 a 68 mm
+                                </span>
+                                <span class="manual-tag">
+                                    <span class="material-icons" style="font-size:0.9rem; color:var(--verde-cadastro);">check_circle</span>
+                                    DNP Normal: 28 a 34 mm por olho
+                                </span>
+                                <span class="manual-tag">
+                                    <span class="material-icons" style="font-size:0.9rem; color:var(--azul-claro);">swap_horiz</span>
+                                    Diferença Típica Esperada: ±1 a 2 mm
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloco Interativo: Anotar DP Manual para Comparação -->
+                    <div class="manual-input-box">
+                        <div class="manual-input-info">
+                            <h4>
+                                <span class="material-icons" style="font-size:1.15rem; color:var(--verde-cadastro);">edit_note</span>
+                                Deseja registrar sua DP manual para comparar?
+                            </h4>
+                            <p>
+                                Digite o valor que você mediu na régua. Ele será guardado e exibido na tela de resultados ao final da medição por foto para comparação lado a lado.
+                            </p>
+                        </div>
+                        <div class="manual-input-controls">
+                            <div class="manual-num-input-wrap">
+                                <input type="number" id="inputManualDP" class="manual-num-input" placeholder="63" min="45" max="80" step="0.5">
+                                <span class="manual-num-unit">mm</span>
+                            </div>
+                            <button type="button" class="manual-btn-save" id="btnSalvarEIniciar" onclick="salvarDPManualEAvancar()">
+                                <span class="material-icons" style="font-size:1.1rem;">photo_camera</span>
+                                Salvar e Iniciar Medição
+                            </button>
+                            <button type="button" class="manual-btn-clear" id="btnLimparDPManual" onclick="limparDPManual()" title="Limpar valor salvo" style="display:none;">
+                                <span class="material-icons" style="font-size:1.1rem;">delete_outline</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
 
     <script src="auth.js"></script>
     <script>
+        function switchManualTab(tab) {
+            const btnEspelho = document.getElementById('tabBtnEspelho');
+            const btnAjudante = document.getElementById('tabBtnAjudante');
+            const contentEspelho = document.getElementById('contentEspelho');
+            const contentAjudante = document.getElementById('contentAjudante');
+
+            if (tab === 'espelho') {
+                btnEspelho.classList.add('active');
+                btnAjudante.classList.remove('active');
+                contentEspelho.classList.add('active');
+                contentAjudante.classList.remove('active');
+            } else {
+                btnEspelho.classList.remove('active');
+                btnAjudante.classList.add('active');
+                contentEspelho.classList.remove('active');
+                contentAjudante.classList.add('active');
+            }
+        }
+
+        function carregarDPManualSalva() {
+            const saved = localStorage.getItem('manual_dp_comparison');
+            const input = document.getElementById('inputManualDP');
+            const btnLimpar = document.getElementById('btnLimparDPManual');
+            if (saved && input) {
+                input.value = saved;
+                if (btnLimpar) btnLimpar.style.display = 'inline-flex';
+            }
+        }
+
+        function salvarDPManualEAvancar() {
+            const input = document.getElementById('inputManualDP');
+            if (input && input.value) {
+                const val = parseFloat(input.value);
+                if (val >= 40 && val <= 85) {
+                    localStorage.setItem('manual_dp_comparison', val.toFixed(1));
+                }
+            }
+            window.location.href = 'foto.html';
+        }
+
+        function limparDPManual() {
+            localStorage.removeItem('manual_dp_comparison');
+            const input = document.getElementById('inputManualDP');
+            const btnLimpar = document.getElementById('btnLimparDPManual');
+            if (input) input.value = '';
+            if (btnLimpar) btnLimpar.style.display = 'none';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             updateHeader();
+            carregarDPManualSalva();
+
+            const input = document.getElementById('inputManualDP');
+            if (input) {
+                input.addEventListener('input', () => {
+                    const btnLimpar = document.getElementById('btnLimparDPManual');
+                    if (input.value && btnLimpar) {
+                        btnLimpar.style.display = 'inline-flex';
+                    }
+                });
+            }
         });
     </script>
 </body>
